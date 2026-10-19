@@ -51,7 +51,7 @@
             <p id="uploadStatus" class="mt-1 sm:mt-2 text-[10px] sm:text-sm text-gray-500 italic">Waiting for file...</p>
         </div>
 
-        <!-- Navigation Tabs -->
+        <!-- Navigation Tabs (With Highlight Logic) -->
         <div class="flex space-x-1 sm:space-x-2 border-b border-gray-300 mb-4 sm:mb-6 w-full overflow-x-auto hide-scroll">
             <button class="py-2 px-3 sm:px-5 text-blue-700 border-b-2 border-blue-700 bg-blue-50 font-bold rounded-t-md transition text-xs sm:text-sm whitespace-nowrap" id="tab-lookup">Lookup Route</button>
             <button class="py-2 px-3 sm:px-5 text-gray-500 border-b-2 border-transparent font-semibold hover:text-blue-600 transition text-xs sm:text-sm whitespace-nowrap" id="tab-pivot">Dynamic Pivot</button>
@@ -67,42 +67,12 @@
                     <label class="block text-xs sm:text-sm font-bold text-gray-700 mb-1">Select Day/Week</label>
                     <select id="daySelector" class="border border-gray-300 rounded-lg p-2 sm:p-2.5 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 text-xs sm:text-sm outline-none cursor-pointer" disabled>
                         <option value="">-- Select --</option>
-                        <option value="Mon1">Monday 1 (Mon1)</option>
-                        <option value="Tue1">Tuesday 1 (Tue1)</option>
-                        <option value="Wed1">Wednesday 1 (Wed1)</option>
-                        <option value="Thu1">Thursday 1 (Thu1)</option>
-                        <option value="Fri1">Friday 1 (Fri1)</option>
-                        <option value="Sat1">Saturday 1 (Sat1)</option>
-                        <option value="Sun1">Sunday 1 (Sun1)</option>
-                        
-                        <option value="Mon2">Monday 2 (Mon2)</option>
-                        <option value="Tue2">Tuesday 2 (Tue2)</option>
-                        <option value="Wed2">Wednesday 2 (Wed2)</option>
-                        <option value="Thu2">Thursday 2 (Thu2)</option>
-                        <option value="Fri2">Friday 2 (Fri2)</option>
-                        <option value="Sat2">Saturday 2 (Sat2)</option>
-                        <option value="Sun2">Sunday 2 (Sun2)</option>
-                        
-                        <option value="Mon3">Monday 3 (Mon3)</option>
-                        <option value="Tue3">Tuesday 3 (Tue3)</option>
-                        <option value="Wed3">Wednesday 3 (Wed3)</option>
-                        <option value="Thu3">Thursday 3 (Thu3)</option>
-                        <option value="Fri3">Friday 3 (Fri3)</option>
-                        <option value="Sat3">Saturday 3 (Sat3)</option>
-                        <option value="Sun3">Sunday 3 (Sun3)</option>
-                        
-                        <option value="Mon4">Monday 4 (Mon4)</option>
-                        <option value="Tue4">Tuesday 4 (Tue4)</option>
-                        <option value="Wed4">Wednesday 4 (Wed4)</option>
-                        <option value="Thu4">Thursday 4 (Thu4)</option>
-                        <option value="Fri4">Friday 4 (Fri4)</option>
-                        <option value="Sat4">Saturday 4 (Sat4)</option>
-                        <option value="Sun4">Sunday 4 (Sun4)</option>
+                        <!-- Options are now dynamically generated via JS -->
                     </select>
                 </div>
             </div>
             
-            <!-- HORIZONTAL TOTAL COUNT UI -->
+            <!-- CENTERED 3-PART TOTAL COUNT UI -->
             <div id="totalCount" class="mb-5 w-full flex justify-center hidden">
                 <!-- Injected via JS -->
             </div>
@@ -212,7 +182,7 @@
                     <div class="relative flex-1 min-h-[200px] sm:min-h-[250px]"><canvas id="barChart"></canvas></div>
                     <div id="barChartAnalysis" class="mt-4 p-3 bg-blue-50 text-blue-800 text-[10px] sm:text-xs rounded-lg border border-blue-100 leading-relaxed hidden"></div>
                 </div>
-                <!-- Doughnut Chart -->
+                <!-- Doughnut Chart (With internal tip) -->
                 <div class="border border-gray-200 rounded-xl p-4 shadow-sm relative w-full flex flex-col transition hover:shadow-md bg-white">
                     <h3 class="text-center text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Total Weekly Distribution</h3>
                     <hr class="border-gray-200 mb-2">
@@ -232,7 +202,11 @@
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
             <h3 class="text-lg font-bold text-gray-800 mb-4 border-b border-gray-200 pb-2 text-center">Customer Details</h3>
-            <div id="modalContent" class="text-sm text-gray-700 w-full"></div>
+            
+            <div id="modalContent" class="w-full">
+                <!-- Content injected via JS -->
+            </div>
+            
             <div class="mt-6 text-center">
                 <button id="closeModalBtnBottom" class="bg-gray-100 text-gray-700 hover:bg-gray-200 px-4 py-2 rounded-lg text-sm font-semibold transition w-full">Close</button>
             </div>
@@ -333,6 +307,7 @@
         ];
 
         const dayNamesMap = { 'Mon': 'Monday', 'Tue': 'Tuesday', 'Wed': 'Wednesday', 'Thu': 'Thursday', 'Fri': 'Friday', 'Sat': 'Saturday', 'Sun': 'Sunday' };
+
         const chartColors = ['#2563eb', '#dc2626', '#059669', '#d97706', '#7c3aed', '#0891b2', '#db2777', '#4f46e5', '#0d9488', '#e11d48'];
 
         // TAB HIGHLIGHTING LOGIC
@@ -412,6 +387,18 @@
                 globalExcelData = parsedData;
                 uploadStatus.innerHTML = `Success! Data loaded.`;
                 uploadStatus.className = "mt-1 sm:mt-2 text-green-600 font-semibold text-[10px] sm:text-sm";
+
+                // DYNAMIC POPULATE DAY SELECTOR (Only showing days with valid data)
+                daySelector.innerHTML = '<option value="">-- Select --</option>';
+                allDays.forEach(day => {
+                    const hasData = globalExcelData.some(row => isValidCell(row[day]));
+                    if(hasData) {
+                        let dayPrefix = day.substring(0, 3);
+                        let weekNum = day.substring(3);
+                        let fullDayName = (dayNamesMap[dayPrefix] || dayPrefix) + ' ' + weekNum + ' (' + day + ')';
+                        daySelector.innerHTML += `<option value="${day}">${fullDayName}</option>`;
+                    }
+                });
 
                 daySelector.disabled = false; graphWeekSelector.disabled = false; graphCategorySelector.disabled = false;
                 
@@ -496,7 +483,7 @@
             }
         };
 
-        // ================= CUSTOMER MODAL LOGIC =================
+        // ================= CUSTOMER MODAL LOGIC (UPDATED LEFT ALIGNED NO GRID) =================
         window.openCustomerModal = function(code) {
             const rowData = globalExcelData.find(r => String(r['CustomerCode']) === String(code));
             if(!rowData) return;
@@ -507,18 +494,23 @@
             });
 
             modalContent.innerHTML = `
-                <div class="grid grid-cols-[max-content_1fr] gap-x-4 gap-y-3 items-center">
-                    <div class="text-gray-500 font-bold whitespace-nowrap">Position Code:</div>
-                    <div class="font-semibold text-gray-700 text-center">${rowData['PositionCode'] || '-'}</div>
-
-                    <div class="text-gray-500 font-bold whitespace-nowrap">Code:</div>
-                    <div class="font-mono font-bold text-blue-600 text-center">${rowData['CustomerCode'] || '-'}</div>
-
-                    <div class="text-gray-500 font-bold whitespace-nowrap">Customer Name:</div>
-                    <div class="font-semibold text-gray-800 text-left break-words w-full">${rowData['Customer Name'] || '-'}</div>
-
-                    <div class="text-gray-500 font-bold whitespace-nowrap">Account:</div>
-                    <div class="font-semibold text-gray-700 text-center">${rowData['Account'] || '-'}</div>
+                <div class="flex flex-col space-y-2 text-left px-2 sm:px-4 text-sm sm:text-base">
+                    <div>
+                        <span class="text-gray-500 font-bold">Customer Name:</span>
+                        <span class="font-semibold text-gray-800 ml-1 break-words">${rowData['Customer Name'] || '-'}</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-500 font-bold">Account:</span>
+                        <span class="font-semibold text-gray-700 ml-1">${rowData['Account'] || '-'}</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-500 font-bold">Code:</span>
+                        <span class="font-mono font-bold text-blue-600 ml-1">${rowData['CustomerCode'] || '-'}</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-500 font-bold">Position Code:</span>
+                        <span class="font-semibold text-gray-700 ml-1">${rowData['PositionCode'] || '-'}</span>
+                    </div>
                 </div>
 
                 <div class="flex flex-col pt-4 border-t border-gray-100 mt-4 text-center">
@@ -607,7 +599,7 @@
         closeWeeklyModalBtnBottom.addEventListener('click', hideWeeklyModal);
         weeklyModal.addEventListener('click', (e) => { if (e.target === weeklyModal) hideWeeklyModal(); });
 
-        // ================= GRAPH MODAL LIST LOGIC (Doughnut Only) =================
+        // ================= GRAPH MODAL LIST LOGIC =================
         window.openGraphModalList = function(categoryName) {
             const categoryCol = graphCategorySelector.value;
             const weekId = graphWeekSelector.value;
