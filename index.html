@@ -14,16 +14,8 @@
     <style>
         body, html { overflow-x: hidden; }
         
-        /* Table Layout for Fixed (Lookup) */
         .compact-table { width: 100%; table-layout: fixed; }
         .compact-table th, .compact-table td {
-            word-wrap: break-word; overflow-wrap: break-word;
-            padding: 0.35rem 0.25rem; font-size: 0.65rem; vertical-align: middle;
-        }
-
-        /* Table Layout for Auto-Adjust (Dynamic Pivot) */
-        .auto-table { width: 100%; table-layout: auto; }
-        .auto-table th, .auto-table td {
             word-wrap: break-word; overflow-wrap: break-word;
             padding: 0.35rem 0.25rem; font-size: 0.65rem; vertical-align: middle;
         }
@@ -31,8 +23,6 @@
         @media (min-width: 640px) {
             .compact-table { table-layout: auto; }
             .compact-table th, .compact-table td { padding: 0.75rem 1rem; font-size: 0.875rem; }
-            
-            .auto-table th, .auto-table td { padding: 0.75rem 1rem; font-size: 0.875rem; }
         }
         
         .account-logo { max-height: 1.25rem; width: auto; max-width: 100%; object-fit: contain; display: inline-block; }
@@ -112,7 +102,10 @@
                 </div>
             </div>
             
-            <p id="totalCount" class="mb-3 font-bold text-gray-700 text-xs sm:text-sm bg-blue-50 inline-block px-2 py-1 rounded border border-blue-100 hidden"></p>
+            <!-- BAGONG DESIGN NG TOTAL COUNT -->
+            <div id="totalCount" class="mb-5 w-full flex justify-center hidden">
+                <!-- I-i-inject dito ang laman mula sa JS -->
+            </div>
             
             <div class="w-full border border-gray-200 rounded-md overflow-hidden">
                 <table class="compact-table bg-white text-left">
@@ -126,7 +119,7 @@
                         </tr>
                     </thead>
                     <tbody id="resultTableBody">
-                        <tr><td colspan="5" class="py-4 sm:py-6 text-center text-gray-500">Please upload a file and select a day.</td></tr>
+                        <tr><td colspan="5" class="py-4 sm:py-6 text-center text-gray-500 font-medium">Please upload a file and select a day.</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -214,13 +207,13 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
                 <!-- Bar Chart -->
-                <div class="border border-gray-200 rounded-xl p-4 shadow-sm relative w-full flex flex-col bg-white">
-                    <h3 class="text-center text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Daily Breakdown</h3>
+                <div class="border border-gray-200 rounded-xl p-4 shadow-sm relative w-full flex flex-col bg-white transition hover:shadow-md">
+                    <h3 class="text-center text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide">Daily Breakdown</h3>
                     <div class="relative flex-1 min-h-[200px] sm:min-h-[250px]"><canvas id="barChart"></canvas></div>
                     <div id="barChartAnalysis" class="mt-4 p-3 bg-blue-50 text-blue-800 text-[10px] sm:text-xs rounded-lg border border-blue-100 leading-relaxed hidden"></div>
                 </div>
-                <!-- Doughnut Chart (With internal tip) -->
-                <div class="border border-gray-200 rounded-xl p-4 shadow-sm relative w-full flex flex-col transition hover:shadow-md bg-white">
+                <!-- Doughnut Chart -->
+                <div class="border border-gray-200 rounded-xl p-4 shadow-sm relative w-full flex flex-col bg-white transition hover:shadow-md">
                     <h3 class="text-center text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Total Weekly Distribution</h3>
                     <hr class="border-gray-200 mb-2">
                     <p class="text-[10px] sm:text-xs text-gray-400 italic text-center mb-3">Double-click on the doughnut chart segment to view the detailed customer list.</p>
@@ -339,6 +332,9 @@
             'Mon4', 'Tue4', 'Wed4', 'Thu4', 'Fri4', 'Sat4', 'Sun4'
         ];
 
+        // Map for Day Names formatting
+        const dayNamesMap = { 'Mon': 'Monday', 'Tue': 'Tuesday', 'Wed': 'Wednesday', 'Thu': 'Thursday', 'Fri': 'Friday', 'Sat': 'Saturday', 'Sun': 'Sunday' };
+
         // Modern flat solid colors
         const chartColors = ['#2563eb', '#dc2626', '#059669', '#d97706', '#7c3aed', '#0891b2', '#db2777', '#4f46e5', '#0d9488', '#e11d48'];
 
@@ -408,7 +404,6 @@
                 
                 let parsedData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
                 
-                // Fallback for corrupted/invalid data structure
                 if (parsedData.length === 0 || (!parsedData[0].hasOwnProperty('Customer Name') && !parsedData[0].hasOwnProperty('Account'))) {
                     uploadStatus.innerHTML = `Error: Nahanap ang sheet ngunit hindi tama ang format ng data. <br><span class="text-red-700">Pakisiguro na kumpleto ang mga columns tulad ng <b>Customer Name</b>, <b>Account</b>, at mga araw (hal. <b>Mon1</b>).</span>`;
                     uploadStatus.className = "mt-1 sm:mt-2 text-red-600 font-bold text-[10px] sm:text-sm";
@@ -423,7 +418,13 @@
 
                 daySelector.disabled = false; graphWeekSelector.disabled = false; graphCategorySelector.disabled = false;
                 
-                if(daySelector.value) performSearch();
+                // Show prompt to select day if not selected
+                if(!daySelector.value) {
+                    resultTableBody.innerHTML = `<tr><td colspan="5" class="py-4 sm:py-6 text-center text-gray-500 font-medium">Please select Day/Week.</td></tr>`;
+                } else {
+                    performSearch();
+                }
+
                 if(!secPivot.classList.contains('hidden')) generateDynamicPivot(globalExcelData);
                 if(!secGraphs.classList.contains('hidden')) renderGraphs();
             };
@@ -438,14 +439,31 @@
             const selectedDay = daySelector.value;
             if(!selectedDay) {
                 totalCount.classList.add('hidden');
-                resultTableBody.innerHTML = `<tr><td colspan="5" class="py-4 sm:py-6 text-center text-gray-500">Please select a day.</td></tr>`;
+                if(globalExcelData.length > 0) {
+                    resultTableBody.innerHTML = `<tr><td colspan="5" class="py-4 sm:py-6 text-center text-gray-500 font-medium">Please select Day/Week.</td></tr>`;
+                } else {
+                    resultTableBody.innerHTML = `<tr><td colspan="5" class="py-4 sm:py-6 text-center text-gray-500 font-medium">Please upload a file and select a day.</td></tr>`;
+                }
                 return;
             }
+
             let filteredData = globalExcelData.filter(row => isValidCell(row[selectedDay]));
             filteredData.sort((a, b) => parseFloat(a[selectedDay]) - parseFloat(b[selectedDay]));
 
-            totalCount.textContent = `Total for ${selectedDay} : ${filteredData.length} Accounts`;
+            // CENTERED 3-PART SEGMENTED TOTAL COUNT UI
+            let dayPrefix = selectedDay.substring(0, 3);
+            let weekNum = selectedDay.substring(3);
+            let fullDayName = dayNamesMap[dayPrefix] || dayPrefix;
+
+            totalCount.innerHTML = `
+                <div class="flex flex-col items-center justify-center bg-white border border-blue-200 shadow-sm rounded-xl px-8 py-3 min-w-[220px]">
+                    <span class="text-[10px] sm:text-xs font-bold text-blue-500 uppercase tracking-widest mb-0.5">Week ${weekNum}</span>
+                    <span class="text-lg sm:text-xl font-extrabold text-gray-800">${fullDayName}</span>
+                    <span class="text-xs sm:text-sm font-bold text-gray-600 mt-1 bg-gray-100 px-3 py-1 rounded-full border border-gray-200">${filteredData.length} Accounts</span>
+                </div>
+            `;
             totalCount.classList.remove('hidden');
+
             resultTableBody.innerHTML = '';
             
             if(filteredData.length === 0) {
@@ -849,7 +867,7 @@
                 };
             });
 
-            // Re-render Bar Chart (No double click)
+            // Re-render Bar Chart (No double click modal logic)
             if (myBarChart) myBarChart.destroy();
             const ctxBar = document.getElementById('barChart').getContext('2d');
             myBarChart = new Chart(ctxBar, {
@@ -859,6 +877,7 @@
                     responsive: true, maintainAspectRatio: false,
                     interaction: { mode: 'index', intersect: false }, 
                     plugins: { 
+                        // Center aligned legends for Bar Chart
                         legend: { position: 'top', align: 'center', labels: { boxWidth: 10, usePointStyle: true, pointStyle: 'rect', font: {weight: 'bold'} } },
                         tooltip: { backgroundColor: '#1f2937', titleFont: { size: 13, weight: 'bold' }, bodyFont: { size: 12 }, padding: 12, cornerRadius: 4 }
                     },
@@ -869,7 +888,7 @@
                 }
             });
 
-            // Re-render Doughnut Chart (With Double Click)
+            // Re-render Doughnut Chart
             if (myDoughnutChart) myDoughnutChart.destroy();
             const ctxDoughnut = document.getElementById('doughnutChart').getContext('2d');
             myDoughnutChart = new Chart(ctxDoughnut, {
@@ -887,6 +906,7 @@
                     responsive: true, maintainAspectRatio: false,
                     cutout: '60%',
                     plugins: { 
+                        // Center aligned legends for Doughnut Chart
                         legend: { position: 'top', align: 'center', labels: { boxWidth: 10, usePointStyle: true, pointStyle: 'circle', font: {weight: 'bold'} } },
                         tooltip: { backgroundColor: '#1f2937', titleFont: { size: 13, weight: 'bold' }, bodyFont: { size: 12 }, padding: 12, cornerRadius: 4 }
                     },
