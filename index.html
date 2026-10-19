@@ -74,6 +74,7 @@
                         <option value="Fri1">Friday 1 (Fri1)</option>
                         <option value="Sat1">Saturday 1 (Sat1)</option>
                         <option value="Sun1">Sunday 1 (Sun1)</option>
+                        
                         <option value="Mon2">Monday 2 (Mon2)</option>
                         <option value="Tue2">Tuesday 2 (Tue2)</option>
                         <option value="Wed2">Wednesday 2 (Wed2)</option>
@@ -81,6 +82,7 @@
                         <option value="Fri2">Friday 2 (Fri2)</option>
                         <option value="Sat2">Saturday 2 (Sat2)</option>
                         <option value="Sun2">Sunday 2 (Sun2)</option>
+                        
                         <option value="Mon3">Monday 3 (Mon3)</option>
                         <option value="Tue3">Tuesday 3 (Tue3)</option>
                         <option value="Wed3">Wednesday 3 (Wed3)</option>
@@ -88,6 +90,7 @@
                         <option value="Fri3">Friday 3 (Fri3)</option>
                         <option value="Sat3">Saturday 3 (Sat3)</option>
                         <option value="Sun3">Sunday 3 (Sun3)</option>
+                        
                         <option value="Mon4">Monday 4 (Mon4)</option>
                         <option value="Tue4">Tuesday 4 (Tue4)</option>
                         <option value="Wed4">Wednesday 4 (Wed4)</option>
@@ -129,12 +132,10 @@
             </div>
 
             <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6 w-full">
-                <!-- Left Column -->
                 <div class="w-full">
                     <div id="pivot-weekly-tables" class="w-full flex flex-col gap-3 sm:gap-5"></div>
                 </div>
 
-                <!-- Right Column -->
                 <div class="w-full flex flex-col gap-4 sm:gap-6">
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden w-full">
                         <table class="compact-table text-center w-full">
@@ -193,22 +194,20 @@
                 </div>
             </div>
             
-            <p class="text-xs text-gray-400 italic mb-4 text-center sm:text-left">Double-click on any chart segment to view detailed customer list.</p>
+            <p class="text-[10px] sm:text-xs text-gray-400 italic mb-4 text-center sm:text-left">Double-click on any chart segment to view the detailed customer list.</p>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
                 <!-- Bar Chart -->
-                <div class="border border-gray-200 rounded-xl p-4 shadow-sm relative w-full flex flex-col hover:shadow-md transition">
-                    <h3 class="text-center text-sm font-bold text-gray-700 mb-2">Daily Breakdown</h3>
+                <div class="border border-gray-200 rounded-xl p-4 shadow-sm relative w-full flex flex-col transition hover:shadow-md bg-white">
+                    <h3 class="text-center text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Daily Breakdown</h3>
                     <div class="relative flex-1 min-h-[200px] sm:min-h-[250px]"><canvas id="barChart"></canvas></div>
-                    <!-- Bar Chart Analysis Text (English) -->
-                    <div id="barChartAnalysis" class="mt-4 p-3 bg-blue-50 text-blue-800 text-xs sm:text-sm rounded-lg border border-blue-100 leading-relaxed hidden"></div>
+                    <div id="barChartAnalysis" class="mt-4 p-3 bg-blue-50 text-blue-800 text-[10px] sm:text-xs rounded-lg border border-blue-100 leading-relaxed hidden"></div>
                 </div>
                 <!-- Doughnut Chart -->
-                <div class="border border-gray-200 rounded-xl p-4 shadow-sm relative w-full flex flex-col hover:shadow-md transition">
-                    <h3 class="text-center text-sm font-bold text-gray-700 mb-2">Total Weekly Distribution</h3>
+                <div class="border border-gray-200 rounded-xl p-4 shadow-sm relative w-full flex flex-col transition hover:shadow-md bg-white">
+                    <h3 class="text-center text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Total Weekly Distribution</h3>
                     <div class="relative flex-1 min-h-[200px] sm:min-h-[250px]"><canvas id="doughnutChart"></canvas></div>
-                    <!-- Doughnut Chart Analysis Text (English) -->
-                    <div id="doughnutChartAnalysis" class="mt-4 p-3 bg-emerald-50 text-emerald-800 text-xs sm:text-sm rounded-lg border border-emerald-100 leading-relaxed hidden"></div>
+                    <div id="doughnutChartAnalysis" class="mt-4 p-3 bg-emerald-50 text-emerald-800 text-[10px] sm:text-xs rounded-lg border border-emerald-100 leading-relaxed hidden"></div>
                 </div>
             </div>
         </div>
@@ -248,28 +247,30 @@
     <!-- ================= GRAPH DOUBLE CLICK MODAL ================= -->
     <div id="graphModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-50 hidden flex items-center justify-center p-4 transition-opacity">
         <div class="bg-white rounded-xl shadow-xl max-w-md w-full relative flex flex-col max-h-[85vh]">
-            <div class="px-4 py-3 sm:px-5 sm:py-4 flex justify-between items-center bg-gray-50 border-b border-gray-200 rounded-t-xl">
-                <h3 id="graphModalTitle" class="text-base sm:text-lg font-bold text-gray-800">Details</h3>
-                <button id="closeGraphModalBtn" class="text-gray-400 hover:text-gray-600 focus:outline-none">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+            <div class="px-4 py-3 sm:px-4 sm:py-4 flex justify-between items-center bg-gray-50 border-b border-gray-200 rounded-t-xl">
+                <!-- Dito ilalagay ang total count -->
+                <h3 id="graphModalTitle" class="text-[13px] sm:text-sm font-bold text-gray-800 uppercase tracking-wide"></h3>
+                <button id="closeGraphModalBtn" class="text-gray-400 hover:text-gray-600 focus:outline-none ml-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
             </div>
             
             <div class="p-4 sm:p-5 overflow-y-auto flex-1">
-                <div class="grid grid-cols-[max-content_1fr] gap-x-4 text-xs sm:text-sm min-w-full" id="graphModalContent">
+                <!-- Gumamit ng auto_1fr para sumakto sa width ng Code ang Column 1 -->
+                <div class="grid grid-cols-[auto_1fr] gap-x-4 text-xs sm:text-sm min-w-full" id="graphModalContent">
                     <!-- Injected Content -->
                 </div>
             </div>
             
-            <div class="p-4 border-t border-gray-200 text-center bg-white rounded-b-xl">
-                <button id="closeGraphModalBtnBottom" class="bg-gray-100 border border-gray-300 text-gray-700 hover:bg-gray-200 px-6 py-2 rounded-lg text-sm font-semibold transition w-full sm:w-auto">Close</button>
+            <div class="p-3 sm:p-4 border-t border-gray-200 text-center bg-white rounded-b-xl">
+                <button id="closeGraphModalBtnBottom" class="bg-gray-100 border border-gray-300 text-gray-700 hover:bg-gray-200 px-6 py-2 rounded-lg text-xs sm:text-sm font-semibold transition w-full sm:w-auto">Close</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Setup Chart.js global defaults for modern look
-        Chart.defaults.font.family = "'Inter', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif";
+        // Setup Chart.js global defaults for modern flat look
+        Chart.defaults.font.family = "'Inter', 'Segoe UI', 'Helvetica Neue', 'Arial', sans-serif";
         Chart.defaults.color = '#6b7280';
         
         let globalExcelData = [];
@@ -322,8 +323,8 @@
             'Mon4', 'Tue4', 'Wed4', 'Thu4', 'Fri4', 'Sat4', 'Sun4'
         ];
 
-        // Modern flat colors
-        const chartColors = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#06b6d4', '#ec4899', '#6366f1', '#14b8a6', '#f43f5e'];
+        // Modern flat solid colors
+        const chartColors = ['#2563eb', '#dc2626', '#059669', '#d97706', '#7c3aed', '#0891b2', '#db2777', '#4f46e5', '#0d9488', '#e11d48'];
 
         function switchTab(activeTabStr) {
             [tabLookup, tabPivot, tabGraphs].forEach(t => {
@@ -429,7 +430,7 @@
                 <tr class="hover:bg-blue-50 transition border-b border-gray-100">
                     <td class="font-semibold text-gray-800 text-center">${row[selectedDay]}</td>
                     <td class="font-mono font-medium text-center">${codeHTML}</td>
-                    <td class="text-gray-700 font-medium leading-tight text-center">${row['Customer Name'] || '-'}</td>
+                    <td class="text-gray-700 font-medium leading-tight text-left sm:text-center">${row['Customer Name'] || '-'}</td>
                     <td class="text-center">${accountDisplay}</td>
                     <td class="text-gray-500 leading-tight text-center">${row['CITY'] || '-'}</td>
                 </tr>`;
@@ -472,10 +473,15 @@
             document.body.classList.add('overflow-hidden');
         };
 
-        const hideModal = () => { 
-            customerModal.classList.add('hidden'); 
-            checkBodyScroll();
+        const checkBodyScroll = () => {
+            if (customerModal.classList.contains('hidden') && 
+                weeklyModal.classList.contains('hidden') && 
+                graphModal.classList.contains('hidden')) {
+                document.body.classList.remove('overflow-hidden');
+            }
         };
+
+        const hideModal = () => { customerModal.classList.add('hidden'); checkBodyScroll(); };
         closeModalBtn.addEventListener('click', hideModal);
         closeModalBtnBottom.addEventListener('click', hideModal);
         customerModal.addEventListener('click', (e) => { if (e.target === customerModal) hideModal(); });
@@ -547,56 +553,70 @@
             });
         };
 
-        const hideWeeklyModal = () => { 
-            weeklyModal.classList.add('hidden'); 
-            checkBodyScroll();
-        };
+        const hideWeeklyModal = () => { weeklyModal.classList.add('hidden'); checkBodyScroll(); };
         closeWeeklyModalBtn.addEventListener('click', hideWeeklyModal);
         closeWeeklyModalBtnBottom.addEventListener('click', hideWeeklyModal);
         weeklyModal.addEventListener('click', (e) => { if (e.target === weeklyModal) hideWeeklyModal(); });
 
-        // Helper to check if any modal is open before reenabling scroll
-        function checkBodyScroll() {
-            if (customerModal.classList.contains('hidden') && 
-                weeklyModal.classList.contains('hidden') && 
-                graphModal.classList.contains('hidden')) {
-                document.body.classList.remove('overflow-hidden');
-            }
-        }
 
         // ================= GRAPH MODAL LIST LOGIC =================
         window.openGraphModalList = function(categoryName, dayCode, displayDayStr) {
             const categoryCol = graphCategorySelector.value;
-            let listData = [];
+            const weekId = graphWeekSelector.value;
+            let displayList = []; 
 
             if (dayCode) {
-                // Filter specifically for Bar Chart (Day + Category)
-                listData = globalExcelData.filter(row => isValidCell(row[dayCode]) && String(row[categoryCol] || 'Unknown') === categoryName);
-                graphModalTitle.innerHTML = `${displayDayStr} - <span class="text-blue-600">${categoryName}</span>`;
-            } else {
-                // Filter for Doughnut Chart (All week + Category)
-                const weekId = graphWeekSelector.value;
-                const daysToFilter = [`Mon${weekId}`, `Tue${weekId}`, `Wed${weekId}`, `Thu${weekId}`, `Fri${weekId}`];
-                listData = globalExcelData.filter(row => {
-                    let hasDay = daysToFilter.some(d => isValidCell(row[d]));
-                    return hasDay && String(row[categoryCol] || 'Unknown') === categoryName;
+                // Bar Chart Click: Specific Day
+                globalExcelData.forEach(row => {
+                    if (isValidCell(row[dayCode]) && String(row[categoryCol] || 'Unknown') === categoryName) {
+                        displayList.push({
+                            code: row['CustomerCode'] || '-',
+                            name: row['Customer Name'] || '-',
+                            day: displayDayStr
+                        });
+                    }
                 });
-                graphModalTitle.innerHTML = `Week ${weekId} Total - <span class="text-blue-600">${categoryName}</span>`;
+                graphModalTitle.innerHTML = `${displayDayStr} - <span class="text-blue-600">${categoryName}</span> - <span class="bg-gray-200 text-gray-700 px-2 py-0.5 rounded ml-1">${displayList.length}</span>`;
+            } else {
+                // Doughnut Chart Click: Whole Week (List all visits, so it matches the chart total exactly)
+                const daysConfig = [
+                    { code: `Mon${weekId}`, name: 'Monday' },
+                    { code: `Tue${weekId}`, name: 'Tuesday' },
+                    { code: `Wed${weekId}`, name: 'Wednesday' },
+                    { code: `Thu${weekId}`, name: 'Thursday' },
+                    { code: `Fri${weekId}`, name: 'Friday' }
+                ];
+                
+                globalExcelData.forEach(row => {
+                    if (String(row[categoryCol] || 'Unknown') === categoryName) {
+                        // Idagdag ang bawat araw na may schedule siya para tumugma ang bilang
+                        daysConfig.forEach(d => {
+                            if(isValidCell(row[d.code])) {
+                                displayList.push({
+                                    code: row['CustomerCode'] || '-',
+                                    name: row['Customer Name'] || '-',
+                                    day: d.name
+                                });
+                            }
+                        });
+                    }
+                });
+                graphModalTitle.innerHTML = `WEEK ${weekId} TOTAL - <span class="text-blue-600">${categoryName}</span> - <span class="bg-gray-200 text-gray-700 px-2 py-0.5 rounded ml-1">${displayList.length}</span>`;
             }
 
-            // Generate Grid
             let gridHtml = `
-                <div class="font-bold text-gray-800 text-center border-b-2 border-gray-200 pb-2 mb-2">Code</div>
-                <div class="font-bold text-gray-800 text-center border-b-2 border-gray-200 pb-2 mb-2">Customer Name</div>
+                <div class="font-bold text-gray-800 text-center border-b-2 border-gray-200 pb-2 mb-2 uppercase text-[10px] sm:text-xs">Code</div>
+                <div class="font-bold text-gray-800 text-center border-b-2 border-gray-200 pb-2 mb-2 uppercase text-[10px] sm:text-xs">Customer Name</div>
             `;
 
-            if(listData.length === 0) {
+            if(displayList.length === 0) {
                 gridHtml += `<div class="col-span-2 text-center py-4 text-gray-500 italic">No records found.</div>`;
             } else {
-                listData.forEach(r => {
+                displayList.forEach(item => {
+                    let extraInfo = !dayCode ? `<span class="text-[9px] sm:text-[10px] text-gray-400 ml-1 block sm:inline">(${item.day})</span>` : '';
                     gridHtml += `
-                        <div class="py-2.5 border-b border-gray-100 text-center font-mono text-blue-600 font-semibold">${r['CustomerCode'] || '-'}</div>
-                        <div class="py-2.5 border-b border-gray-100 text-right text-gray-700 font-medium">${r['Customer Name'] || '-'}</div>
+                        <div class="py-2 border-b border-gray-100 text-center font-mono text-blue-600 font-semibold flex items-center justify-center px-1 sm:px-2">${item.code}</div>
+                        <div class="py-2 border-b border-gray-100 text-right text-gray-700 font-medium">${item.name} ${extraInfo}</div>
                     `;
                 });
             }
@@ -606,10 +626,7 @@
             document.body.classList.add('overflow-hidden');
         }
 
-        const hideGraphModal = () => { 
-            graphModal.classList.add('hidden'); 
-            checkBodyScroll();
-        };
+        const hideGraphModal = () => { graphModal.classList.add('hidden'); checkBodyScroll(); };
         closeGraphModalBtn.addEventListener('click', hideGraphModal);
         closeGraphModalBtnBottom.addEventListener('click', hideGraphModal);
         graphModal.addEventListener('click', (e) => { if (e.target === graphModal) hideGraphModal(); });
@@ -713,7 +730,7 @@
         }
 
         // ================= GRAPHS LOGIC =================
-        let lastClickTime = 0; // Para maka-detect ng double click sa charts
+        let lastClickTime = 0; 
 
         function renderGraphs() {
             if (globalExcelData.length === 0) return;
@@ -747,7 +764,7 @@
 
             const categories = Object.keys(catCountTotal);
             
-            // INSIGHTS COMPUTATION (ENGLISH)
+            // INSIGHTS COMPUTATION
             let dailyTotals = [0, 0, 0, 0, 0];
             categories.forEach(cat => { catCountPerDay[cat].forEach((val, i) => { dailyTotals[i] += val; }); });
             
@@ -780,17 +797,17 @@
             const doughnutLabels = categories;
             const doughnutDataVals = categories.map(c => catCountTotal[c]);
 
+            // Clean Flat Design for Bars
             const barDatasets = categories.map((cat, i) => {
                 return {
                     label: cat,
                     data: catCountPerDay[cat],
-                    backgroundColor: chartColors[i % chartColors.length], // Solid modern colors
-                    borderRadius: 4, // Modern rounded bars
-                    borderSkipped: false
+                    backgroundColor: chartColors[i % chartColors.length], 
+                    borderRadius: 0, 
+                    borderWidth: 0 
                 };
             });
 
-            // Re-render Bar Chart
             if (myBarChart) myBarChart.destroy();
             const ctxBar = document.getElementById('barChart').getContext('2d');
             myBarChart = new Chart(ctxBar, {
@@ -798,18 +815,18 @@
                 data: { labels: dayLabels, datasets: barDatasets },
                 options: {
                     responsive: true, maintainAspectRatio: false,
-                    interaction: { mode: 'index', intersect: false }, // Hover shows all accounts per day
+                    interaction: { mode: 'index', intersect: false }, 
                     plugins: { 
-                        legend: { position: 'bottom', labels: { boxWidth: 12, usePointStyle: true, padding: 20 } },
-                        tooltip: { backgroundColor: 'rgba(17, 24, 39, 0.9)', titleFont: { size: 13 }, bodyFont: { size: 12 }, padding: 10, cornerRadius: 8 }
+                        legend: { position: 'top', align: 'end', labels: { boxWidth: 10, usePointStyle: true, pointStyle: 'rect' } },
+                        tooltip: { backgroundColor: '#1f2937', titleFont: { size: 13, weight: 'bold' }, bodyFont: { size: 12 }, padding: 12, cornerRadius: 4 }
                     },
                     scales: { 
-                        x: { stacked: true, grid: { display: false } }, 
-                        y: { stacked: true, beginAtZero: true, ticks: { precision: 0 }, border: { dash: [4, 4] }, grid: { color: '#f3f4f6' } } 
+                        x: { stacked: true, grid: { display: false }, ticks: { font: { weight: '600' } } }, 
+                        y: { stacked: true, beginAtZero: true, ticks: { precision: 0 }, border: { display: false }, grid: { color: '#e5e7eb', drawTicks: false } } 
                     },
                     onClick: (e, activeEls) => {
                         const currentTime = new Date().getTime();
-                        if (currentTime - lastClickTime < 400 && activeEls.length > 0) { // Double click detected
+                        if (currentTime - lastClickTime < 400 && activeEls.length > 0) {
                             const datasetIndex = activeEls[0].datasetIndex;
                             const index = activeEls[0].index;
                             
@@ -824,7 +841,6 @@
                 }
             });
 
-            // Re-render Doughnut Chart
             if (myDoughnutChart) myDoughnutChart.destroy();
             const ctxDoughnut = document.getElementById('doughnutChart').getContext('2d');
             myDoughnutChart = new Chart(ctxDoughnut, {
@@ -834,23 +850,23 @@
                     datasets: [{
                         data: doughnutDataVals,
                         backgroundColor: chartColors.slice(0, categories.length),
-                        borderWidth: 0,
+                        borderWidth: 2, borderColor: '#ffffff',
                         hoverOffset: 6
                     }]
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false,
-                    cutout: '65%', // Thinner modern doughnut
+                    cutout: '60%',
                     plugins: { 
-                        legend: { position: 'right', labels: { boxWidth: 12, usePointStyle: true, padding: 20 } },
-                        tooltip: { backgroundColor: 'rgba(17, 24, 39, 0.9)', titleFont: { size: 13 }, bodyFont: { size: 12 }, padding: 10, cornerRadius: 8 }
+                        legend: { position: 'right', labels: { boxWidth: 10, usePointStyle: true, pointStyle: 'circle' } },
+                        tooltip: { backgroundColor: '#1f2937', titleFont: { size: 13, weight: 'bold' }, bodyFont: { size: 12 }, padding: 12, cornerRadius: 4 }
                     },
                     onClick: (e, activeEls) => {
                         const currentTime = new Date().getTime();
                         if (currentTime - lastClickTime < 400 && activeEls.length > 0) {
                             const index = activeEls[0].index;
                             const catName = doughnutLabels[index];
-                            openGraphModalList(catName, null, null); // Pass null for dayCode to get whole week
+                            openGraphModalList(catName, null, null); 
                         }
                         lastClickTime = currentTime;
                     }
