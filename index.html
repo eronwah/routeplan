@@ -196,6 +196,28 @@
         </div>
     </div>
 
+    <!-- ================= CUSTOMER MODAL ================= -->
+    <div id="customerModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-50 hidden flex items-center justify-center p-4 transition-opacity">
+        <div class="bg-white rounded-xl shadow-xl max-w-sm w-full p-5 sm:p-6 relative">
+            <!-- Close Button -->
+            <button id="closeModalBtn" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600 focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+            
+            <h3 class="text-lg font-bold text-gray-800 mb-4 border-b border-gray-200 pb-2">Customer Details</h3>
+            
+            <div id="modalContent" class="space-y-3 text-sm text-gray-700">
+                <!-- Content injected via JS -->
+            </div>
+            
+            <div class="mt-6 text-center">
+                <button id="closeModalBtnBottom" class="bg-gray-100 text-gray-700 hover:bg-gray-200 px-4 py-2 rounded-lg text-sm font-semibold transition w-full">Close</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         let globalExcelData = [];
 
@@ -209,6 +231,20 @@
         const tabPivot = document.getElementById('tab-pivot');
         const secLookup = document.getElementById('section-lookup');
         const secPivot = document.getElementById('section-pivot');
+
+        // Modal Elements
+        const customerModal = document.getElementById('customerModal');
+        const modalContent = document.getElementById('modalContent');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const closeModalBtnBottom = document.getElementById('closeModalBtnBottom');
+
+        // List of all possible days to check schedule
+        const allDays = [
+            'Mon1', 'Tue1', 'Wed1', 'Thu1', 'Fri1', 'Sat1', 'Sun1',
+            'Mon2', 'Tue2', 'Wed2', 'Thu2', 'Fri2', 'Sat2', 'Sun2',
+            'Mon3', 'Tue3', 'Wed3', 'Thu3', 'Fri3', 'Sat3', 'Sun3',
+            'Mon4', 'Tue4', 'Wed4', 'Thu4', 'Fri4', 'Sat4', 'Sun4'
+        ];
 
         tabLookup.addEventListener('click', () => {
             secLookup.classList.remove('hidden'); secPivot.classList.add('hidden');
@@ -227,7 +263,6 @@
             return typeof val === 'number' && !isNaN(val);
         };
 
-        // Helper function for neat logos (used ONLY in Lookup Route)
         const getAccountLogo = (accountName) => {
             if (!accountName || accountName === '-') return '-';
             const acc = accountName.toString().toUpperCase();
@@ -273,7 +308,6 @@
 
                 daySelector.disabled = false;
                 
-                // Trigger auto search if day is already selected during re-upload
                 if(daySelector.value) {
                     performSearch();
                 }
@@ -291,7 +325,6 @@
         function performSearch() {
             const selectedDay = daySelector.value;
             
-            // If "-- Select --" is chosen, reset the table
             if(!selectedDay) {
                 totalCount.classList.add('hidden');
                 resultTableBody.innerHTML = `<tr><td colspan="5" class="py-4 sm:py-6 text-center text-gray-500">Please select a day.</td></tr>`;
@@ -311,19 +344,90 @@
             }
             
             filteredData.forEach(row => {
-                // Here we use getAccountLogo for Lookup Table ONLY
                 const accountDisplay = getAccountLogo(row['Account'] || '-');
+                const customerCode = row['CustomerCode'] || '-';
                 
+                // Dinagdag ang onclick at hover styles para sa Customer Code
+                let codeHTML = customerCode;
+                if(customerCode !== '-') {
+                    codeHTML = `<span class="cursor-pointer text-blue-600 hover:text-blue-800 hover:underline transition" onclick="openCustomerModal('${customerCode}')">${customerCode}</span>`;
+                }
+
                 resultTableBody.innerHTML += `
                 <tr class="hover:bg-blue-50 transition border-b border-gray-100">
                     <td class="font-semibold text-gray-800 text-center sm:text-left">${row[selectedDay]}</td>
-                    <td class="font-mono text-blue-600 font-medium">${row['CustomerCode'] || '-'}</td>
+                    <td class="font-mono font-medium">${codeHTML}</td>
                     <td class="text-gray-700 font-medium leading-tight">${row['Customer Name'] || '-'}</td>
                     <td class="text-center">${accountDisplay}</td>
                     <td class="text-gray-500 leading-tight">${row['CITY'] || '-'}</td>
                 </tr>`;
             });
         }
+
+        // ================= MODAL LOGIC =================
+
+        window.openCustomerModal = function(code) {
+            // Find row in global data
+            const rowData = globalExcelData.find(r => String(r['CustomerCode']) === String(code));
+            if(!rowData) return; // Fail safe
+
+            // Gather schedule (kailan siya napupuntahan)
+            let scheduleList = [];
+            allDays.forEach(day => {
+                if (isValidCell(rowData[day])) {
+                    // Maglagay ng space para maganda basahin: Mon1 -> Mon 1
+                    let formattedDay = day.replace(/(\D+)(\d+)/, '$1 $2');
+                    scheduleList.push(formattedDay);
+                }
+            });
+
+            // Format schedule text
+            let scheduleText = scheduleList.length > 0 ? scheduleList.join(', ') : 'None';
+
+            // Inject to modal
+            modalContent.innerHTML = `
+                <div class="flex justify-between items-center pb-1">
+                    <span class="text-gray-500 font-medium">Customer Code:</span>
+                    <span class="font-mono font-bold text-blue-600">${rowData['CustomerCode'] || '-'}</span>
+                </div>
+                <div class="flex flex-col pb-1">
+                    <span class="text-gray-500 font-medium">Customer Name:</span>
+                    <span class="font-semibold text-gray-800">${rowData['Customer Name'] || '-'}</span>
+                </div>
+                <div class="flex justify-between items-center pb-1">
+                    <span class="text-gray-500 font-medium">Account:</span>
+                    <span class="font-semibold text-gray-700">${rowData['Account'] || '-'}</span>
+                </div>
+                <div class="flex justify-between items-center pb-1">
+                    <span class="text-gray-500 font-medium">Position Code:</span>
+                    <span class="font-semibold text-gray-700">${rowData['PositionCode'] || '-'}</span>
+                </div>
+                <div class="flex flex-col pt-2 border-t border-gray-100 mt-2">
+                    <span class="text-gray-500 font-medium mb-1">Schedule / Frequency:</span>
+                    <span class="bg-blue-50 text-blue-800 p-2 rounded-md font-medium text-xs leading-relaxed border border-blue-100">${scheduleText}</span>
+                </div>
+            `;
+
+            // Show Modal
+            customerModal.classList.remove('hidden');
+        };
+
+        const hideModal = () => {
+            customerModal.classList.add('hidden');
+        };
+
+        closeModalBtn.addEventListener('click', hideModal);
+        closeModalBtnBottom.addEventListener('click', hideModal);
+        
+        // Close when clicking outside the modal box
+        customerModal.addEventListener('click', (e) => {
+            if (e.target === customerModal) {
+                hideModal();
+            }
+        });
+
+
+        // ================= DYNAMIC PIVOT =================
 
         function generateDynamicPivot(rawData) {
             const data = rawData.filter(row => row['Customer Name'] || row['Account'] || row['CustomerCode']);
