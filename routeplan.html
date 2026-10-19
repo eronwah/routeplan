@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Route List Planner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body class="bg-gray-100 font-sans min-h-screen">
+
+    <div class="container mx-auto p-4 sm:p-6 max-w-7xl">
+        <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-4 sm:mb-6 border-b pb-4">Route List Planner</h1>
+
+        <!-- File Upload Section -->
+        <div class="bg-white p-4 sm:p-6 rounded-lg shadow-md mb-6">
+            <h2 class="text-lg sm:text-xl font-semibold mb-4 text-gray-700">1. Upload Main Data (.xlsx)</h2>
+            <div class="flex items-center gap-4">
+                <input type="file" id="excelFile" accept=".xlsx" class="block w-full text-sm text-gray-500
+                    file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold
+                    file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer border border-gray-300 rounded-md p-2">
+            </div>
+            <p id="uploadStatus" class="mt-3 text-sm text-gray-600 italic">Naghihintay ng file...</p>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="flex space-x-2 sm:space-x-4 border-b border-gray-200 mb-6 overflow-x-auto whitespace-nowrap pb-1">
+            <button class="py-2 px-3 sm:px-4 text-blue-600 border-b-2 border-blue-600 font-medium transition text-sm sm:text-base" id="tab-lookup">Lookup Route</button>
+            <button class="py-2 px-3 sm:px-4 text-gray-500 border-b-2 border-transparent hover:text-blue-600 font-medium transition text-sm sm:text-base" id="tab-pivot">Dynamic Pivot</button>
+        </div>
+
+        <!-- ================= LOOKUP ROUTE SECTION ================= -->
+        <div id="section-lookup" class="bg-white p-4 sm:p-6 rounded-lg shadow-md">
+            <h2 class="text-lg sm:text-xl font-semibold mb-4 text-gray-700">2. Lookup Route</h2>
+            
+            <div class="flex flex-col sm:flex-row items-start sm:items-end gap-4 mb-6 w-full">
+                <div class="w-full sm:w-auto">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Select Day/Week</label>
+                    <select id="daySelector" class="border border-gray-300 rounded-md p-2 w-full sm:w-48 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100" disabled>
+                        <option value="">-- Pumili --</option>
+                        <option value="Mon1">Monday 1 (Mon1)</option>
+                        <option value="Tue1">Tuesday 1 (Tue1)</option>
+                        <option value="Wed1">Wednesday 1 (Wed1)</option>
+                        <option value="Thu1">Thursday 1 (Thu1)</option>
+                        <option value="Fri1">Friday 1 (Fri1)</option>
+                        <option value="Sat1">Saturday 1 (Sat1)</option>
+                        <option value="Sun1">Sunday 1 (Sun1)</option>
+                        
+                        <option value="Mon2">Monday 2 (Mon2)</option>
+                        <option value="Tue2">Tuesday 2 (Tue2)</option>
+                        <option value="Wed2">Wednesday 2 (Wed2)</option>
+                        <option value="Thu2">Thursday 2 (Thu2)</option>
+                        <option value="Fri2">Friday 2 (Fri2)</option>
+                        <option value="Sat2">Saturday 2 (Sat2)</option>
+                        <option value="Sun2">Sunday 2 (Sun2)</option>
+                        
+                        <option value="Mon3">Monday 3 (Mon3)</option>
+                        <option value="Tue3">Tuesday 3 (Tue3)</option>
+                        <option value="Wed3">Wednesday 3 (Wed3)</option>
+                        <option value="Thu3">Thursday 3 (Thu3)</option>
+                        <option value="Fri3">Friday 3 (Fri3)</option>
+                        <option value="Sat3">Saturday 3 (Sat3)</option>
+                        <option value="Sun3">Sunday 3 (Sun3)</option>
+                        
+                        <option value="Mon4">Monday 4 (Mon4)</option>
+                        <option value="Tue4">Tuesday 4 (Tue4)</option>
+                        <option value="Wed4">Wednesday 4 (Wed4)</option>
+                        <option value="Thu4">Thursday 4 (Thu4)</option>
+                        <option value="Fri4">Friday 4 (Fri4)</option>
+                        <option value="Sat4">Saturday 4 (Sat4)</option>
+                        <option value="Sun4">Sunday 4 (Sun4)</option>
+                    </select>
+                </div>
+                <button id="btnSearch" class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition disabled:bg-gray-400 w-full sm:w-auto" disabled>Search Route</button>
+            </div>
+            
+            <div class="overflow-x-auto w-full">
+                <p id="totalCount" class="mb-2 font-semibold text-gray-700 text-sm sm:text-base"></p>
+                <table class="min-w-full bg-white border border-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="py-2 px-3 sm:py-3 sm:px-4 border-b text-left text-xs sm:text-sm font-semibold text-gray-600">Sequence</th>
+                            <th class="py-2 px-3 sm:py-3 sm:px-4 border-b text-left text-xs sm:text-sm font-semibold text-gray-600">Customer Code</th>
+                            <th class="py-2 px-3 sm:py-3 sm:px-4 border-b text-left text-xs sm:text-sm font-semibold text-gray-600">Customer Name</th>
+                            <th class="py-2 px-3 sm:py-3 sm:px-4 border-b text-left text-xs sm:text-sm font-semibold text-gray-600">Account</th>
+                            <th class="py-2 px-3 sm:py-3 sm:px-4 border-b text-left text-xs sm:text-sm font-semibold text-gray-600">City</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultTableBody">
+                        <tr><td colspan="5" class="py-4 text-center text-gray-500 text-sm">Mag-upload ng file at pumili ng araw.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ================= DYNAMIC PIVOT SECTION ================= -->
+        <div id="section-pivot" class="bg-white p-4 sm:p-6 rounded-lg shadow-md hidden">
+            <h2 class="text-lg sm:text-xl font-semibold mb-4 text-gray-700">Dynamic Pivot Dashboard</h2>
+            
+            <div class="mb-6">
+                <span class="bg-yellow-300 font-bold border border-black px-3 py-1 sm:px-4 sm:py-2 text-base sm:text-lg inline-block">Total Accounts Listed : <span id="pivot-total-accounts">0</span></span>
+            </div>
+
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                <!-- Left Column: Weekly Breakdowns -->
+                <div class="space-y-6 w-full">
+                    <div id="pivot-weekly-tables" class="overflow-x-auto pb-2 w-full">
+                        <!-- Tables will be generated via JS -->
+                    </div>
+                </div>
+
+                <!-- Right Column: Account Breakdowns -->
+                <div class="space-y-8 w-full overflow-hidden">
+                    <div class="overflow-x-auto pb-2 w-full">
+                        <table class="min-w-full border-collapse border border-black text-xs sm:text-sm text-center">
+                            <thead>
+                                <tr><th colspan="6" class="bg-blue-400 border border-black py-1">Count of Frequency</th></tr>
+                                <tr class="bg-blue-300">
+                                    <th class="border border-black py-1 px-2 text-left min-w-[100px]">Account</th>
+                                    <th class="border border-black py-1 px-2">1</th>
+                                    <th class="border border-black py-1 px-2">2</th>
+                                    <th class="border border-black py-1 px-2">3</th>
+                                    <th class="border border-black py-1 px-2">4</th>
+                                    <th class="border border-black py-1 px-2 font-bold">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pivot-freq-body">
+                                <tr><td colspan="6" class="py-2 text-gray-500">No data available</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="overflow-x-auto pb-2 w-full">
+                        <table class="min-w-full border-collapse border border-black text-xs sm:text-sm text-center">
+                            <thead>
+                                <tr><th colspan="6" class="bg-gray-500 text-white border border-black py-1">Weekly visit count per Account</th></tr>
+                                <tr class="bg-gray-400 text-white">
+                                    <th class="border border-black py-1 px-2 text-left min-w-[100px]">Account</th>
+                                    <th class="border border-black py-1 px-2">1</th>
+                                    <th class="border border-black py-1 px-2">2</th>
+                                    <th class="border border-black py-1 px-2">3</th>
+                                    <th class="border border-black py-1 px-2">4</th>
+                                    <th class="border border-black py-1 px-2 font-bold">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pivot-visit-body">
+                                <tr><td colspan="6" class="py-2 text-gray-500">No data available</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let globalExcelData = [];
+
+        const fileInput = document.getElementById('excelFile');
+        const uploadStatus = document.getElementById('uploadStatus');
+        const daySelector = document.getElementById('daySelector');
+        const btnSearch = document.getElementById('btnSearch');
+        const resultTableBody = document.getElementById('resultTableBody');
+        const totalCount = document.getElementById('totalCount');
+
+        const tabLookup = document.getElementById('tab-lookup');
+        const tabPivot = document.getElementById('tab-pivot');
+        const secLookup = document.getElementById('section-lookup');
+        const secPivot = document.getElementById('section-pivot');
+
+        tabLookup.addEventListener('click', () => {
+            secLookup.classList.remove('hidden'); secPivot.classList.add('hidden');
+            tabLookup.classList.add('border-blue-600', 'text-blue-600'); tabLookup.classList.remove('text-gray-500', 'border-transparent');
+            tabPivot.classList.add('text-gray-500', 'border-transparent'); tabPivot.classList.remove('border-blue-600', 'text-blue-600');
+        });
+        
+        tabPivot.addEventListener('click', () => {
+            secPivot.classList.remove('hidden'); secLookup.classList.add('hidden');
+            tabPivot.classList.add('border-blue-600', 'text-blue-600'); tabPivot.classList.remove('text-gray-500', 'border-transparent');
+            tabLookup.classList.add('text-gray-500', 'border-transparent'); tabLookup.classList.remove('border-blue-600', 'text-blue-600');
+            if(globalExcelData.length > 0) generateDynamicPivot(globalExcelData);
+        });
+
+        // BAGONG LOGIC: STRICT NUMBER CHECK ONLY
+        const isValidCell = (val) => {
+            // Sinisiguro natin na numero lang talaga ang papasa (hal. 1, 2, 3...)
+            // Babalewalain niya ang spaces, dash (-), tuldok, o anumang text
+            return typeof val === 'number' && !isNaN(val);
+        };
+
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            uploadStatus.textContent = "Binabasa ang file, sandali lamang...";
+            uploadStatus.className = "mt-3 text-sm text-blue-600 font-semibold";
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, {type: 'array'});
+                
+                const sheetName = 'IC003CAB OCTOBER - FINAL';
+                
+                if(!workbook.SheetNames.includes(sheetName)) {
+                    uploadStatus.textContent = `Error: Hindi mahanap ang sheet na "${sheetName}" sa in-upload na file.`;
+                    uploadStatus.className = "mt-3 text-sm text-red-600 font-semibold";
+                    
+                    daySelector.disabled = true; btnSearch.disabled = true;
+                    return;
+                }
+                
+                globalExcelData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+                uploadStatus.textContent = `Success! Na-load ang data mula sa "${sheetName}".`;
+                uploadStatus.className = "mt-3 text-sm text-green-600 font-semibold";
+
+                daySelector.disabled = false; btnSearch.disabled = false;
+                if(!secPivot.classList.contains('hidden')) generateDynamicPivot(globalExcelData);
+            };
+            reader.readAsArrayBuffer(file);
+        });
+
+        btnSearch.addEventListener('click', function() {
+            const selectedDay = daySelector.value;
+            if(!selectedDay) { alert("Pumili muna ng araw."); return; }
+            let filteredData = globalExcelData.filter(row => isValidCell(row[selectedDay]));
+            filteredData.sort((a, b) => parseFloat(a[selectedDay]) - parseFloat(b[selectedDay]));
+
+            totalCount.textContent = `Total for ${selectedDay} : ${filteredData.length} Accounts`;
+            resultTableBody.innerHTML = '';
+            if(filteredData.length === 0) {
+                resultTableBody.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-gray-500 text-sm">Walang naka-schedule sa araw na ito.</td></tr>`; return;
+            }
+            filteredData.forEach(row => {
+                resultTableBody.innerHTML += `
+                <tr class="hover:bg-gray-50">
+                    <td class="py-2 px-3 sm:px-4 border-b font-medium text-xs sm:text-sm whitespace-nowrap">${row[selectedDay]}</td>
+                    <td class="py-2 px-3 sm:px-4 border-b text-xs sm:text-sm whitespace-nowrap font-mono text-gray-700">${row['CustomerCode'] || '-'}</td>
+                    <td class="py-2 px-3 sm:px-4 border-b text-xs sm:text-sm min-w-[150px]">${row['Customer Name'] || '-'}</td>
+                    <td class="py-2 px-3 sm:px-4 border-b text-xs sm:text-sm whitespace-nowrap">${row['Account'] || '-'}</td>
+                    <td class="py-2 px-3 sm:px-4 border-b text-xs sm:text-sm whitespace-nowrap">${row['CITY'] || '-'}</td>
+                </tr>`;
+            });
+        });
+
+        function generateDynamicPivot(rawData) {
+            const data = rawData.filter(row => row['Customer Name'] || row['Account'] || row['CustomerCode']);
+            document.getElementById('pivot-total-accounts').textContent = data.length;
+
+            let positionCodes = [...new Set(data.map(r => r['PositionCode']).filter(Boolean))];
+            if (positionCodes.length === 0) positionCodes = ['UNKNOWN'];
+
+            const weeksData = [
+                { id: 1, color: 'bg-green-300', days: ['Mon1', 'Tue1', 'Wed1', 'Thu1', 'Fri1'] },
+                { id: 2, color: 'bg-pink-400', days: ['Mon2', 'Tue2', 'Wed2', 'Thu2', 'Fri2'] },
+                { id: 3, color: 'bg-orange-300', days: ['Mon3', 'Tue3', 'Wed3', 'Thu3', 'Fri3'] },
+                { id: 4, color: 'bg-blue-400', days: ['Mon4', 'Tue4', 'Wed4', 'Thu4', 'Fri4'] }
+            ];
+
+            let weeklyHTML = '';
+            weeksData.forEach(w => {
+                weeklyHTML += `
+                <table class="min-w-[600px] w-full border-collapse border border-black text-xs sm:text-sm text-center mb-6 shadow-sm">
+                    <thead>
+                        <tr><th colspan="2" class="${w.color} border border-black py-1 w-1/4">Week ${w.id}</th><th colspan="5"></th></tr>
+                        <tr class="${w.color}">
+                            <th class="border border-black py-1 px-2">Position Code</th>
+                            <th class="border border-black py-1 px-2 w-1/8">Monday</th>
+                            <th class="border border-black py-1 px-2 w-1/8">Tuesday</th>
+                            <th class="border border-black py-1 px-2 w-1/8">Wednesday</th>
+                            <th class="border border-black py-1 px-2 w-1/8">Thursday</th>
+                            <th class="border border-black py-1 px-2 w-1/8">Friday</th>
+                            <th class="border border-black py-1 px-2 w-1/8">Average</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white">`;
+
+                positionCodes.forEach(pc => {
+                    const pcData = data.filter(r => (r['PositionCode'] || 'UNKNOWN') === pc);
+                    const counts = w.days.map(d => pcData.filter(r => isValidCell(r[d])).length);
+                    const total = counts.reduce((a, b) => a + b, 0);
+                    const avg = (total / 5).toFixed(1);
+
+                    weeklyHTML += `
+                        <tr>
+                            <td class="border border-black py-1 px-2 font-semibold">${pc}</td>
+                            ${counts.map(c => `<td class="border border-black py-1 px-2">${c > 0 ? c : ''}</td>`).join('')}
+                            <td class="border border-black py-1 px-2 font-bold">${avg}</td>
+                        </tr>`;
+                });
+
+                weeklyHTML += `</tbody></table>`;
+            });
+            document.getElementById('pivot-weekly-tables').innerHTML = weeklyHTML;
+
+            let freqData = {};
+            let visitData = {};
+
+            data.forEach(row => {
+                let acc = row['Account'] || 'UNKNOWN';
+                let freq = row['Frequency'];
+
+                if(!freqData[acc]) freqData[acc] = {1:0, 2:0, 3:0, 4:0, total:0};
+                if(!visitData[acc]) visitData[acc] = {1:0, 2:0, 3:0, 4:0, total:0};
+
+                if([1,2,3,4].includes(freq)) {
+                    freqData[acc][freq]++;
+                    freqData[acc].total++;
+                }
+
+                let w1Visits = ['Mon1','Tue1','Wed1','Thu1','Fri1','Sat1','Sun1'].filter(d => isValidCell(row[d])).length;
+                let w2Visits = ['Mon2','Tue2','Wed2','Thu2','Fri2','Sat2','Sun2'].filter(d => isValidCell(row[d])).length;
+                let w3Visits = ['Mon3','Tue3','Wed3','Thu3','Fri3','Sat3','Sun3'].filter(d => isValidCell(row[d])).length;
+                let w4Visits = ['Mon4','Tue4','Wed4','Thu4','Fri4','Sat4','Sun4'].filter(d => isValidCell(row[d])).length;
+
+                visitData[acc][1] += w1Visits;
+                visitData[acc][2] += w2Visits;
+                visitData[acc][3] += w3Visits;
+                visitData[acc][4] += w4Visits;
+                visitData[acc].total += (w1Visits + w2Visits + w3Visits + w4Visits);
+            });
+
+            let freqHTML = '';
+            let freqGrandTotal = {1:0, 2:0, 3:0, 4:0, total:0};
+            Object.keys(freqData).forEach(acc => {
+                let d = freqData[acc];
+                freqGrandTotal[1] += d[1]; freqGrandTotal[2] += d[2]; freqGrandTotal[3] += d[3]; freqGrandTotal[4] += d[4]; freqGrandTotal.total += d.total;
+                freqHTML += `<tr><td class="border border-black py-1 px-2 text-left bg-white whitespace-nowrap">${acc}</td>
+                             <td class="border border-black py-1 px-1 bg-white">${d[1] || ''}</td><td class="border border-black py-1 px-1 bg-white">${d[2] || ''}</td>
+                             <td class="border border-black py-1 px-1 bg-white">${d[3] || ''}</td><td class="border border-black py-1 px-1 bg-white">${d[4] || ''}</td>
+                             <td class="border border-black py-1 px-2 font-bold bg-blue-100">${d.total || ''}</td></tr>`;
+            });
+            freqHTML += `<tr class="bg-blue-300 font-bold"><td class="border border-black py-1 px-2 text-left">Grand Total</td>
+                         <td class="border border-black py-1 px-1">${freqGrandTotal[1]}</td><td class="border border-black py-1 px-1">${freqGrandTotal[2]}</td>
+                         <td class="border border-black py-1 px-1">${freqGrandTotal[3]}</td><td class="border border-black py-1 px-1">${freqGrandTotal[4]}</td>
+                         <td class="border border-black py-1 px-2">${freqGrandTotal.total}</td></tr>`;
+            document.getElementById('pivot-freq-body').innerHTML = freqHTML;
+
+            let visitHTML = '';
+            let visitGrandTotal = {1:0, 2:0, 3:0, 4:0, total:0};
+            Object.keys(visitData).forEach(acc => {
+                let d = visitData[acc];
+                visitGrandTotal[1] += d[1]; visitGrandTotal[2] += d[2]; visitGrandTotal[3] += d[3]; visitGrandTotal[4] += d[4]; visitGrandTotal.total += d.total;
+                visitHTML += `<tr><td class="border border-black py-1 px-2 text-left bg-white whitespace-nowrap">${acc}</td>
+                             <td class="border border-black py-1 px-1 bg-white">${d[1]}</td><td class="border border-black py-1 px-1 bg-white">${d[2]}</td>
+                             <td class="border border-black py-1 px-1 bg-white">${d[3]}</td><td class="border border-black py-1 px-1 bg-white">${d[4]}</td>
+                             <td class="border border-black py-1 px-2 font-bold bg-gray-200">${d.total}</td></tr>`;
+            });
+            visitHTML += `<tr class="bg-gray-500 text-white font-bold"><td class="border border-black py-1 px-2 text-left">Total</td>
+                         <td class="border border-black py-1 px-1">${visitGrandTotal[1]}</td><td class="border border-black py-1 px-1">${visitGrandTotal[2]}</td>
+                         <td class="border border-black py-1 px-1">${visitGrandTotal[3]}</td><td class="border border-black py-1 px-1">${visitGrandTotal[4]}</td>
+                         <td class="border border-black py-1 px-2">${visitGrandTotal.total}</td></tr>`;
+            document.getElementById('pivot-visit-body').innerHTML = visitHTML;
+        }
+    </script>
+</body>
+</html>
