@@ -51,7 +51,7 @@
             <p id="uploadStatus" class="mt-1 sm:mt-2 text-[10px] sm:text-sm text-gray-500 italic">Waiting for file...</p>
         </div>
 
-        <!-- Navigation Tabs -->
+        <!-- Navigation Tabs (With Highlight Logic) -->
         <div class="flex space-x-1 sm:space-x-2 border-b border-gray-300 mb-4 sm:mb-6 w-full overflow-x-auto hide-scroll">
             <button class="py-2 px-3 sm:px-5 text-blue-700 border-b-2 border-blue-700 bg-blue-50 font-bold rounded-t-md transition text-xs sm:text-sm whitespace-nowrap" id="tab-lookup">Lookup Route</button>
             <button class="py-2 px-3 sm:px-5 text-gray-500 border-b-2 border-transparent font-semibold hover:text-blue-600 transition text-xs sm:text-sm whitespace-nowrap" id="tab-pivot">Dynamic Pivot</button>
@@ -102,9 +102,9 @@
                 </div>
             </div>
             
-            <!-- BAGONG DESIGN NG TOTAL COUNT -->
+            <!-- CENTERED 3-PART TOTAL COUNT UI -->
             <div id="totalCount" class="mb-5 w-full flex justify-center hidden">
-                <!-- I-i-inject dito ang laman mula sa JS -->
+                <!-- Injected via JS -->
             </div>
             
             <div class="w-full border border-gray-200 rounded-md overflow-hidden">
@@ -207,13 +207,13 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
                 <!-- Bar Chart -->
-                <div class="border border-gray-200 rounded-xl p-4 shadow-sm relative w-full flex flex-col bg-white transition hover:shadow-md">
+                <div class="border border-gray-200 rounded-xl p-4 shadow-sm relative w-full flex flex-col transition hover:shadow-md bg-white">
                     <h3 class="text-center text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide">Daily Breakdown</h3>
                     <div class="relative flex-1 min-h-[200px] sm:min-h-[250px]"><canvas id="barChart"></canvas></div>
                     <div id="barChartAnalysis" class="mt-4 p-3 bg-blue-50 text-blue-800 text-[10px] sm:text-xs rounded-lg border border-blue-100 leading-relaxed hidden"></div>
                 </div>
-                <!-- Doughnut Chart -->
-                <div class="border border-gray-200 rounded-xl p-4 shadow-sm relative w-full flex flex-col bg-white transition hover:shadow-md">
+                <!-- Doughnut Chart (With internal tip) -->
+                <div class="border border-gray-200 rounded-xl p-4 shadow-sm relative w-full flex flex-col transition hover:shadow-md bg-white">
                     <h3 class="text-center text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Total Weekly Distribution</h3>
                     <hr class="border-gray-200 mb-2">
                     <p class="text-[10px] sm:text-xs text-gray-400 italic text-center mb-3">Double-click on the doughnut chart segment to view the detailed customer list.</p>
@@ -232,7 +232,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
             <h3 class="text-lg font-bold text-gray-800 mb-4 border-b border-gray-200 pb-2 text-center">Customer Details</h3>
-            <div id="modalContent" class="space-y-3 text-sm text-gray-700"></div>
+            <div id="modalContent" class="text-sm text-gray-700 w-full"></div>
             <div class="mt-6 text-center">
                 <button id="closeModalBtnBottom" class="bg-gray-100 text-gray-700 hover:bg-gray-200 px-4 py-2 rounded-lg text-sm font-semibold transition w-full">Close</button>
             </div>
@@ -332,10 +332,8 @@
             'Mon4', 'Tue4', 'Wed4', 'Thu4', 'Fri4', 'Sat4', 'Sun4'
         ];
 
-        // Map for Day Names formatting
         const dayNamesMap = { 'Mon': 'Monday', 'Tue': 'Tuesday', 'Wed': 'Wednesday', 'Thu': 'Thursday', 'Fri': 'Friday', 'Sat': 'Saturday', 'Sun': 'Sunday' };
 
-        // Modern flat solid colors
         const chartColors = ['#2563eb', '#dc2626', '#059669', '#d97706', '#7c3aed', '#0891b2', '#db2777', '#4f46e5', '#0d9488', '#e11d48'];
 
         // TAB HIGHLIGHTING LOGIC
@@ -418,7 +416,6 @@
 
                 daySelector.disabled = false; graphWeekSelector.disabled = false; graphCategorySelector.disabled = false;
                 
-                // Show prompt to select day if not selected
                 if(!daySelector.value) {
                     resultTableBody.innerHTML = `<tr><td colspan="5" class="py-4 sm:py-6 text-center text-gray-500 font-medium">Please select Day/Week.</td></tr>`;
                 } else {
@@ -450,7 +447,6 @@
             let filteredData = globalExcelData.filter(row => isValidCell(row[selectedDay]));
             filteredData.sort((a, b) => parseFloat(a[selectedDay]) - parseFloat(b[selectedDay]));
 
-            // CENTERED 3-PART SEGMENTED TOTAL COUNT UI
             let dayPrefix = selectedDay.substring(0, 3);
             let weekNum = selectedDay.substring(3);
             let fullDayName = dayNamesMap[dayPrefix] || dayPrefix;
@@ -499,7 +495,7 @@
             }
         };
 
-        // ================= CUSTOMER MODAL LOGIC =================
+        // ================= CUSTOMER MODAL LOGIC (UPDATED 2-GRID NO HEADERS) =================
         window.openCustomerModal = function(code) {
             const rowData = globalExcelData.find(r => String(r['CustomerCode']) === String(code));
             if(!rowData) return;
@@ -510,24 +506,27 @@
             });
 
             modalContent.innerHTML = `
-                <div class="flex justify-between items-center pb-1">
-                    <span class="text-gray-500 font-bold">Customer Code:</span>
-                    <span class="font-mono font-bold text-blue-600">${rowData['CustomerCode'] || '-'}</span>
+                <div class="grid grid-cols-[max-content_1fr] gap-x-4 gap-y-3 items-center">
+                    <!-- Position Code Row -->
+                    <div class="text-gray-500 font-bold whitespace-nowrap">Position Code:</div>
+                    <div class="font-semibold text-gray-700 text-center">${rowData['PositionCode'] || '-'}</div>
+
+                    <!-- Customer Code Row -->
+                    <div class="text-gray-500 font-bold whitespace-nowrap">Code:</div>
+                    <div class="font-mono font-bold text-blue-600 text-center">${rowData['CustomerCode'] || '-'}</div>
+
+                    <!-- Customer Name Row -->
+                    <div class="text-gray-500 font-bold whitespace-nowrap">Customer Name:</div>
+                    <div class="font-semibold text-gray-800 text-left break-words w-full">${rowData['Customer Name'] || '-'}</div>
+
+                    <!-- Account Row -->
+                    <div class="text-gray-500 font-bold whitespace-nowrap">Account:</div>
+                    <div class="font-semibold text-gray-700 text-center">${rowData['Account'] || '-'}</div>
                 </div>
-                <div class="flex flex-col pb-1">
-                    <span class="text-gray-500 font-bold text-center sm:text-left">Customer Name:</span>
-                    <span class="font-semibold text-gray-800 text-center sm:text-left">${rowData['Customer Name'] || '-'}</span>
-                </div>
-                <div class="flex justify-between items-center pb-1">
-                    <span class="text-gray-500 font-bold">Account:</span>
-                    <span class="font-semibold text-gray-700">${rowData['Account'] || '-'}</span>
-                </div>
-                <div class="flex justify-between items-center pb-1">
-                    <span class="text-gray-500 font-bold">Position Code:</span>
-                    <span class="font-semibold text-gray-700">${rowData['PositionCode'] || '-'}</span>
-                </div>
-                <div class="flex flex-col pt-2 border-t border-gray-100 mt-2 text-center">
-                    <span class="text-gray-500 font-bold mb-1">Schedule / Frequency:</span>
+
+                <!-- Schedule Area (Outside Grid) -->
+                <div class="flex flex-col pt-4 border-t border-gray-100 mt-4 text-center">
+                    <span class="text-gray-500 font-bold mb-2">Schedule / Frequency:</span>
                     <span class="bg-blue-50 text-blue-800 p-2 rounded-md font-bold text-xs leading-relaxed border border-blue-100">${scheduleList.length > 0 ? scheduleList.join(', ') : 'None'}</span>
                 </div>
             `;
@@ -867,7 +866,6 @@
                 };
             });
 
-            // Re-render Bar Chart (No double click modal logic)
             if (myBarChart) myBarChart.destroy();
             const ctxBar = document.getElementById('barChart').getContext('2d');
             myBarChart = new Chart(ctxBar, {
@@ -877,7 +875,6 @@
                     responsive: true, maintainAspectRatio: false,
                     interaction: { mode: 'index', intersect: false }, 
                     plugins: { 
-                        // Center aligned legends for Bar Chart
                         legend: { position: 'top', align: 'center', labels: { boxWidth: 10, usePointStyle: true, pointStyle: 'rect', font: {weight: 'bold'} } },
                         tooltip: { backgroundColor: '#1f2937', titleFont: { size: 13, weight: 'bold' }, bodyFont: { size: 12 }, padding: 12, cornerRadius: 4 }
                     },
@@ -888,7 +885,6 @@
                 }
             });
 
-            // Re-render Doughnut Chart
             if (myDoughnutChart) myDoughnutChart.destroy();
             const ctxDoughnut = document.getElementById('doughnutChart').getContext('2d');
             myDoughnutChart = new Chart(ctxDoughnut, {
@@ -906,7 +902,6 @@
                     responsive: true, maintainAspectRatio: false,
                     cutout: '60%',
                     plugins: { 
-                        // Center aligned legends for Doughnut Chart
                         legend: { position: 'top', align: 'center', labels: { boxWidth: 10, usePointStyle: true, pointStyle: 'circle', font: {weight: 'bold'} } },
                         tooltip: { backgroundColor: '#1f2937', titleFont: { size: 13, weight: 'bold' }, bodyFont: { size: 12 }, padding: 12, cornerRadius: 4 }
                     },
