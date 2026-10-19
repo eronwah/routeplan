@@ -121,7 +121,6 @@
                 <table class="compact-table bg-white text-left">
                     <thead class="bg-gray-100 border-b border-gray-200">
                         <tr>
-                            <!-- Inayos ang Header: naka Center Align at Bold na -->
                             <th class="font-bold text-gray-800 text-center w-[12%]">Seq</th>
                             <th class="font-bold text-gray-800 text-center w-[18%]">Code</th>
                             <th class="font-bold text-gray-800 text-center w-[35%]">Customer</th>
@@ -379,7 +378,6 @@
                     codeHTML = `<span class="cursor-pointer text-blue-600 hover:text-blue-800 hover:underline transition" onclick="openCustomerModal('${customerCode}')">${customerCode}</span>`;
                 }
 
-                // Inayos ang alignment sa Lookup Table body cells para tumugma sa Headers
                 resultTableBody.innerHTML += `
                 <tr class="hover:bg-blue-50 transition border-b border-gray-100">
                     <td class="font-semibold text-gray-800 text-center">${row[selectedDay]}</td>
@@ -428,10 +426,17 @@
                     <span class="bg-blue-50 text-blue-800 p-2 rounded-md font-medium text-xs leading-relaxed border border-blue-100">${scheduleText}</span>
                 </div>
             `;
+            
             customerModal.classList.remove('hidden');
+            document.body.classList.add('overflow-hidden'); // Disable background scroll
         };
 
-        const hideModal = () => { customerModal.classList.add('hidden'); };
+        const hideModal = () => { 
+            customerModal.classList.add('hidden'); 
+            if(weeklyModal.classList.contains('hidden')) {
+                document.body.classList.remove('overflow-hidden'); 
+            }
+        };
         closeModalBtn.addEventListener('click', hideModal);
         closeModalBtnBottom.addEventListener('click', hideModal);
         customerModal.addEventListener('click', (e) => { if (e.target === customerModal) hideModal(); });
@@ -461,7 +466,6 @@
                     gridRows = `<div class="col-span-2 text-center text-gray-500 py-3 italic text-xs sm:text-sm">No schedule available</div>`;
                 } else {
                     dayData.forEach(r => {
-                        // Naka-center din ang items sa loob ng Accordion grid
                         gridRows += `
                             <div class="py-2 border-b border-gray-100 text-gray-700 font-medium text-center break-words flex items-center justify-center">${r['Customer Name'] || '-'}</div>
                             <div class="py-2 border-b border-gray-100 text-gray-600 text-center px-2 whitespace-nowrap flex items-center justify-center">${r['Account'] || '-'}</div>
@@ -469,11 +473,8 @@
                     });
                 }
 
-                // Gumamit ng grid-cols-[1fr_auto] para lumapad nang kusa ang Account column nang hindi nag-o-overlap, 
-                // pero may wrapper na overflow-x-auto para hindi masira ang design sakaling sobrang haba.
-                // Ang Header ay bold at center align.
                 contentHTML += `
-                <details class="bg-white border border-gray-200 rounded-lg shadow-sm group">
+                <details class="bg-white border border-gray-200 rounded-lg shadow-sm group weekly-accordion">
                     <summary class="${w.headBg} cursor-pointer px-4 py-3 font-semibold text-gray-800 rounded-lg group-open:rounded-b-none outline-none select-none flex justify-between items-center transition text-sm sm:text-base">
                         <span class="flex items-center">
                             ${dayNames[index]} 
@@ -493,10 +494,32 @@
             });
 
             weeklyModalContent.innerHTML = contentHTML;
+            
+            // Show the modal and lock background scroll
             weeklyModal.classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
+
+            // ACCORDION EXCLUSIVE OPEN LOGIC
+            const accordions = weeklyModalContent.querySelectorAll('.weekly-accordion');
+            accordions.forEach(acc => {
+                acc.addEventListener('toggle', function() {
+                    if (this.open) {
+                        accordions.forEach(otherAcc => {
+                            if (otherAcc !== this && otherAcc.open) {
+                                otherAcc.open = false; // Close the other ones automatically
+                            }
+                        });
+                    }
+                });
+            });
         };
 
-        const hideWeeklyModal = () => { weeklyModal.classList.add('hidden'); };
+        const hideWeeklyModal = () => { 
+            weeklyModal.classList.add('hidden'); 
+            if(customerModal.classList.contains('hidden')) {
+                document.body.classList.remove('overflow-hidden'); 
+            }
+        };
         closeWeeklyModalBtn.addEventListener('click', hideWeeklyModal);
         closeWeeklyModalBtnBottom.addEventListener('click', hideWeeklyModal);
         weeklyModal.addEventListener('click', (e) => { if (e.target === weeklyModal) hideWeeklyModal(); });
