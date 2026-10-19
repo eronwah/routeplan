@@ -7,45 +7,63 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
-        /* Pinipigilan ang buong website na mag-scroll pahalang */
+        /* Compact Table Design for Mobile to avoid horizontal scrolling */
         body, html { overflow-x: hidden; }
         
-        /* Tinatago ang pangit na scrollbar sa tabs pero pwedeng i-swipe */
-        .hide-scroll::-webkit-scrollbar { display: none; }
-        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+        .compact-table {
+            width: 100%;
+            table-layout: fixed; /* Pinipilit na mag-fit sa screen ang table */
+        }
+        
+        .compact-table th, .compact-table td {
+            word-wrap: break-word; /* Kung mahaba ang text, bababa ito (wrap) */
+            overflow-wrap: break-word;
+            padding: 0.25rem; /* Sobrang liit na padding para sa mobile */
+            font-size: 0.65rem; /* Maliit na text para mag-kasya */
+        }
+
+        /* Pag sa desktop (sm breakpoint and up), ibabalik natin sa normal ang padding at font-size */
+        @media (min-width: 640px) {
+            .compact-table {
+                table-layout: auto; 
+            }
+            .compact-table th, .compact-table td {
+                padding: 0.75rem 1rem;
+                font-size: 0.875rem; /* text-sm */
+            }
+        }
     </style>
 </head>
-<body class="bg-gray-50 font-sans min-h-screen text-gray-800 pb-10">
+<body class="bg-gray-50 font-sans min-h-screen text-gray-800 pb-12">
 
-    <!-- Mas maliit na padding sa mobile (p-3) para mas malaki ang space para sa data -->
-    <div class="container mx-auto p-3 sm:p-6 max-w-7xl w-full">
-        <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-4 border-b pb-3">Route List Planner</h1>
+    <div class="container mx-auto p-2 sm:p-6 max-w-7xl">
+        <h1 class="text-xl sm:text-3xl font-bold text-gray-800 mb-4 sm:mb-6 border-b border-gray-200 pb-2 sm:pb-4">Route List Planner</h1>
 
         <!-- File Upload Section -->
-        <div class="bg-white p-4 sm:p-6 rounded-lg shadow-sm border border-gray-200 mb-4 sm:mb-6 w-full">
-            <h2 class="text-base sm:text-xl font-semibold mb-3 text-gray-700">1. Upload Main Data (.xlsx)</h2>
-            <div class="w-full overflow-hidden">
+        <div class="bg-white p-3 sm:p-6 rounded-xl shadow-sm border border-gray-200 mb-4 sm:mb-6 w-full">
+            <h2 class="text-sm sm:text-lg font-semibold mb-2 sm:mb-3 text-gray-700">1. Upload Main Data (.xlsx)</h2>
+            <div class="w-full">
                 <input type="file" id="excelFile" accept=".xlsx" class="block w-full text-xs sm:text-sm text-gray-500
-                    file:mr-3 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs sm:file:text-sm file:font-semibold
-                    file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer border border-gray-300 rounded-md p-2">
+                    file:mr-2 sm:file:mr-4 file:py-1.5 sm:file:py-2.5 file:px-3 sm:file:px-4 file:rounded-lg file:border-0 file:font-semibold
+                    file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer border border-gray-300 rounded-lg p-1.5 sm:p-2 transition">
             </div>
-            <p id="uploadStatus" class="mt-2 text-xs sm:text-sm text-gray-500 italic">Naghihintay ng file...</p>
+            <p id="uploadStatus" class="mt-1 sm:mt-2 text-[10px] sm:text-sm text-gray-500 italic">Naghihintay ng file...</p>
         </div>
 
         <!-- Navigation Tabs -->
-        <div class="flex space-x-2 border-b border-gray-300 mb-4 overflow-x-auto whitespace-nowrap hide-scroll w-full">
-            <button class="py-2 px-4 text-blue-600 border-b-2 border-blue-600 font-medium transition text-sm" id="tab-lookup">Lookup Route</button>
-            <button class="py-2 px-4 text-gray-500 border-b-2 border-transparent hover:text-blue-600 font-medium transition text-sm" id="tab-pivot">Dynamic Pivot</button>
+        <div class="flex space-x-1 sm:space-x-2 border-b border-gray-300 mb-4 sm:mb-6 w-full">
+            <button class="py-2 px-3 sm:px-5 text-blue-600 border-b-2 border-blue-600 font-semibold transition text-xs sm:text-sm flex-1 sm:flex-none" id="tab-lookup">Lookup Route</button>
+            <button class="py-2 px-3 sm:px-5 text-gray-500 border-b-2 border-transparent hover:text-blue-600 font-semibold transition text-xs sm:text-sm flex-1 sm:flex-none" id="tab-pivot">Dynamic Pivot</button>
         </div>
 
         <!-- ================= LOOKUP ROUTE SECTION ================= -->
-        <div id="section-lookup" class="bg-white p-4 sm:p-6 rounded-lg shadow-sm border border-gray-200 w-full">
-            <h2 class="text-base sm:text-xl font-semibold mb-3 text-gray-700">2. Lookup Route</h2>
+        <div id="section-lookup" class="bg-white p-2 sm:p-6 rounded-xl shadow-sm border border-gray-200 w-full">
+            <h2 class="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-gray-700">2. Lookup Route</h2>
             
-            <div class="flex flex-col sm:flex-row items-start sm:items-end gap-3 mb-4 w-full">
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-end gap-2 sm:gap-3 mb-4 sm:mb-6 w-full">
                 <div class="w-full sm:w-auto flex-1">
                     <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Select Day/Week</label>
-                    <select id="daySelector" class="border border-gray-300 rounded-md p-2 w-full focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 text-sm" disabled>
+                    <select id="daySelector" class="border border-gray-300 rounded-lg p-2 sm:p-2.5 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 text-xs sm:text-sm outline-none" disabled>
                         <option value="">-- Pumili --</option>
                         <option value="Mon1">Monday 1 (Mon1)</option>
                         <option value="Tue1">Tuesday 1 (Tue1)</option>
@@ -80,88 +98,93 @@
                         <option value="Sun4">Sunday 4 (Sun4)</option>
                     </select>
                 </div>
-                <button id="btnSearch" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition disabled:bg-gray-400 w-full sm:w-auto text-sm font-medium" disabled>Search Route</button>
+                <button id="btnSearch" class="bg-blue-600 text-white px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg hover:bg-blue-700 transition disabled:bg-gray-400 w-full sm:w-auto text-xs sm:text-sm font-semibold shadow-sm" disabled>Search Route</button>
             </div>
             
-            <p id="totalCount" class="mb-2 font-semibold text-gray-700 text-sm"></p>
-            <p class="text-[10px] text-gray-400 italic block sm:hidden mb-2">Mag-swipe ↔️ para makita ang buong table.</p>
+            <p id="totalCount" class="mb-3 font-semibold text-gray-700 text-xs sm:text-sm bg-blue-50 inline-block px-2 py-1 rounded border border-blue-100 hidden"></p>
             
-            <!-- Table wrapper na may strict overflow para sa mobile -->
-            <div class="w-full overflow-x-auto border border-gray-200 rounded-md">
-                <table class="min-w-[600px] w-full bg-white text-left">
-                    <thead class="bg-gray-100">
+            <!-- Table Container -->
+            <div class="w-full border border-gray-200 rounded-md overflow-hidden">
+                <table class="compact-table bg-white text-left">
+                    <thead class="bg-gray-100 border-b border-gray-200">
                         <tr>
-                            <th class="py-2 px-3 border-b text-xs font-semibold text-gray-600">Sequence</th>
-                            <th class="py-2 px-3 border-b text-xs font-semibold text-gray-600">Customer Code</th>
-                            <th class="py-2 px-3 border-b text-xs font-semibold text-gray-600">Customer Name</th>
-                            <th class="py-2 px-3 border-b text-xs font-semibold text-gray-600">Account</th>
-                            <th class="py-2 px-3 border-b text-xs font-semibold text-gray-600">City</th>
+                            <!-- In-adjust ang width percentage para sa mobile view -->
+                            <th class="font-semibold text-gray-600 w-[12%]">Seq</th>
+                            <th class="font-semibold text-gray-600 w-[18%]">Code</th>
+                            <th class="font-semibold text-gray-600 w-[35%]">Customer</th>
+                            <th class="font-semibold text-gray-600 w-[15%]">Account</th>
+                            <th class="font-semibold text-gray-600 w-[20%]">City</th>
                         </tr>
                     </thead>
                     <tbody id="resultTableBody">
-                        <tr><td colspan="5" class="py-4 text-center text-gray-500 text-xs">Mag-upload ng file at pumili ng araw.</td></tr>
+                        <tr><td colspan="5" class="py-4 sm:py-6 text-center text-gray-500">Mag-upload ng file at pumili ng araw.</td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
 
         <!-- ================= DYNAMIC PIVOT SECTION ================= -->
-        <div id="section-pivot" class="bg-white p-4 sm:p-6 rounded-lg shadow-sm border border-gray-200 w-full hidden">
-            <h2 class="text-base sm:text-xl font-semibold mb-3 text-gray-700">Dynamic Pivot Dashboard</h2>
+        <div id="section-pivot" class="bg-transparent w-full hidden">
             
-            <div class="mb-4">
-                <span class="bg-yellow-300 font-bold border border-black px-3 py-1 text-sm sm:text-base inline-block">Total Accounts Listed : <span id="pivot-total-accounts">0</span></span>
+            <div class="mb-4 sm:mb-6 flex justify-between items-center bg-white p-3 sm:p-4 rounded-xl border border-gray-200 shadow-sm">
+                <h2 class="text-sm sm:text-lg font-semibold text-gray-700">Dynamic Pivot</h2>
+                <span class="bg-yellow-300 font-bold border border-yellow-400 rounded px-2 sm:px-4 py-1 text-xs sm:text-base shadow-sm">
+                    Total: <span id="pivot-total-accounts">0</span>
+                </span>
             </div>
 
-            <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 w-full">
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6 w-full">
                 
                 <!-- Left Column: Weekly Breakdowns -->
                 <div class="w-full">
-                    <p class="text-[10px] text-gray-400 italic block sm:hidden mb-2">Mag-swipe ↔️ para makita ang buong linggo.</p>
-                    <div id="pivot-weekly-tables" class="w-full flex flex-col gap-4">
+                    <div id="pivot-weekly-tables" class="w-full flex flex-col gap-3 sm:gap-5">
                         <!-- Tables will be generated via JS -->
                     </div>
                 </div>
 
                 <!-- Right Column: Account Breakdowns -->
-                <div class="w-full flex flex-col gap-6">
-                    <div class="w-full overflow-x-auto border border-gray-200 rounded-md">
-                        <table class="min-w-[450px] w-full border-collapse text-xs sm:text-sm text-center">
+                <div class="w-full flex flex-col gap-4 sm:gap-6">
+                    
+                    <!-- Freq Table Wrapper -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden w-full">
+                        <table class="compact-table text-center w-full">
                             <thead>
-                                <tr><th colspan="6" class="bg-blue-400 border border-black py-1">Count of Frequency</th></tr>
-                                <tr class="bg-blue-300">
-                                    <th class="border border-black py-1 px-2 text-left w-[120px]">Account</th>
-                                    <th class="border border-black py-1 px-1">1</th>
-                                    <th class="border border-black py-1 px-1">2</th>
-                                    <th class="border border-black py-1 px-1">3</th>
-                                    <th class="border border-black py-1 px-1">4</th>
-                                    <th class="border border-black py-1 px-2 font-bold">Total</th>
+                                <tr><th colspan="6" class="bg-blue-500 text-white font-bold py-1.5 sm:py-2">Count of Frequency</th></tr>
+                                <tr class="bg-blue-100 text-gray-700 border-b border-gray-300">
+                                    <th class="text-left w-[30%]">Account</th>
+                                    <th class="w-[12%]">1</th>
+                                    <th class="w-[12%]">2</th>
+                                    <th class="w-[12%]">3</th>
+                                    <th class="w-[12%]">4</th>
+                                    <th class="w-[22%] font-bold">Total</th>
                                 </tr>
                             </thead>
                             <tbody id="pivot-freq-body">
-                                <tr><td colspan="6" class="py-2 text-gray-500">No data available</td></tr>
+                                <tr><td colspan="6" class="py-4 text-gray-500">No data available</td></tr>
                             </tbody>
                         </table>
                     </div>
 
-                    <div class="w-full overflow-x-auto border border-gray-200 rounded-md">
-                        <table class="min-w-[450px] w-full border-collapse text-xs sm:text-sm text-center">
+                    <!-- Visit Table Wrapper -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden w-full">
+                        <table class="compact-table text-center w-full">
                             <thead>
-                                <tr><th colspan="6" class="bg-gray-500 text-white border border-black py-1">Weekly visit count per Account</th></tr>
-                                <tr class="bg-gray-400 text-white">
-                                    <th class="border border-black py-1 px-2 text-left w-[120px]">Account</th>
-                                    <th class="border border-black py-1 px-1">1</th>
-                                    <th class="border border-black py-1 px-1">2</th>
-                                    <th class="border border-black py-1 px-1">3</th>
-                                    <th class="border border-black py-1 px-1">4</th>
-                                    <th class="border border-black py-1 px-2 font-bold">Total</th>
+                                <tr><th colspan="6" class="bg-gray-600 text-white font-bold py-1.5 sm:py-2">Weekly visit count per Account</th></tr>
+                                <tr class="bg-gray-100 text-gray-700 border-b border-gray-300">
+                                    <th class="text-left w-[30%]">Account</th>
+                                    <th class="w-[12%]">1</th>
+                                    <th class="w-[12%]">2</th>
+                                    <th class="w-[12%]">3</th>
+                                    <th class="w-[12%]">4</th>
+                                    <th class="w-[22%] font-bold">Total</th>
                                 </tr>
                             </thead>
                             <tbody id="pivot-visit-body">
-                                <tr><td colspan="6" class="py-2 text-gray-500">No data available</td></tr>
+                                <tr><td colspan="6" class="py-4 text-gray-500">No data available</td></tr>
                             </tbody>
                         </table>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -203,7 +226,7 @@
             const file = e.target.files[0];
             if (!file) return;
             uploadStatus.textContent = "Binabasa ang file, sandali lamang...";
-            uploadStatus.className = "mt-2 text-xs sm:text-sm text-blue-600 font-semibold";
+            uploadStatus.className = "mt-1 sm:mt-2 text-blue-600 font-semibold text-[10px] sm:text-sm";
 
             const reader = new FileReader();
             reader.onload = function(e) {
@@ -214,14 +237,14 @@
                 
                 if(!workbook.SheetNames.includes(sheetName)) {
                     uploadStatus.textContent = `Error: Hindi mahanap ang sheet na "${sheetName}".`;
-                    uploadStatus.className = "mt-2 text-xs sm:text-sm text-red-600 font-semibold";
+                    uploadStatus.className = "mt-1 sm:mt-2 text-red-600 font-semibold text-[10px] sm:text-sm";
                     daySelector.disabled = true; btnSearch.disabled = true;
                     return;
                 }
                 
                 globalExcelData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
                 uploadStatus.textContent = `Success! Na-load ang data mula sa "${sheetName}".`;
-                uploadStatus.className = "mt-2 text-xs sm:text-sm text-green-600 font-semibold";
+                uploadStatus.className = "mt-1 sm:mt-2 text-green-600 font-semibold text-[10px] sm:text-sm";
 
                 daySelector.disabled = false; btnSearch.disabled = false;
                 if(!secPivot.classList.contains('hidden')) generateDynamicPivot(globalExcelData);
@@ -236,18 +259,22 @@
             filteredData.sort((a, b) => parseFloat(a[selectedDay]) - parseFloat(b[selectedDay]));
 
             totalCount.textContent = `Total for ${selectedDay} : ${filteredData.length} Accounts`;
+            totalCount.classList.remove('hidden');
             resultTableBody.innerHTML = '';
+            
             if(filteredData.length === 0) {
-                resultTableBody.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-gray-500 text-xs">Walang naka-schedule sa araw na ito.</td></tr>`; return;
+                resultTableBody.innerHTML = `<tr><td colspan="5" class="py-4 sm:py-6 text-center text-gray-500">Walang naka-schedule sa araw na ito.</td></tr>`; 
+                return;
             }
+            
             filteredData.forEach(row => {
                 resultTableBody.innerHTML += `
-                <tr class="hover:bg-blue-50 border-b border-gray-100 last:border-0 transition">
-                    <td class="py-2 px-3 font-medium text-xs sm:text-sm whitespace-nowrap text-gray-800">${row[selectedDay]}</td>
-                    <td class="py-2 px-3 text-xs sm:text-sm whitespace-nowrap font-mono text-gray-600">${row['CustomerCode'] || '-'}</td>
-                    <td class="py-2 px-3 text-xs sm:text-sm min-w-[150px] text-gray-700">${row['Customer Name'] || '-'}</td>
-                    <td class="py-2 px-3 text-xs sm:text-sm whitespace-nowrap text-gray-600">${row['Account'] || '-'}</td>
-                    <td class="py-2 px-3 text-xs sm:text-sm whitespace-nowrap text-gray-600">${row['CITY'] || '-'}</td>
+                <tr class="hover:bg-blue-50 transition border-b border-gray-100">
+                    <td class="font-semibold text-gray-800 text-center sm:text-left">${row[selectedDay]}</td>
+                    <td class="font-mono text-blue-600 font-medium">${row['CustomerCode'] || '-'}</td>
+                    <td class="text-gray-700 font-medium">${row['Customer Name'] || '-'}</td>
+                    <td class="text-gray-600">${row['Account'] || '-'}</td>
+                    <td class="text-gray-500">${row['CITY'] || '-'}</td>
                 </tr>`;
             });
         });
@@ -260,27 +287,27 @@
             if (positionCodes.length === 0) positionCodes = ['UNKNOWN'];
 
             const weeksData = [
-                { id: 1, color: 'bg-green-300', days: ['Mon1', 'Tue1', 'Wed1', 'Thu1', 'Fri1'] },
-                { id: 2, color: 'bg-pink-400', days: ['Mon2', 'Tue2', 'Wed2', 'Thu2', 'Fri2'] },
-                { id: 3, color: 'bg-orange-300', days: ['Mon3', 'Tue3', 'Wed3', 'Thu3', 'Fri3'] },
-                { id: 4, color: 'bg-blue-400', days: ['Mon4', 'Tue4', 'Wed4', 'Thu4', 'Fri4'] }
+                { id: 1, titleBg: 'bg-emerald-500', headBg: 'bg-emerald-100', days: ['Mon1', 'Tue1', 'Wed1', 'Thu1', 'Fri1'] },
+                { id: 2, titleBg: 'bg-rose-500', headBg: 'bg-rose-100', days: ['Mon2', 'Tue2', 'Wed2', 'Thu2', 'Fri2'] },
+                { id: 3, titleBg: 'bg-amber-500', headBg: 'bg-amber-100', days: ['Mon3', 'Tue3', 'Wed3', 'Thu3', 'Fri3'] },
+                { id: 4, titleBg: 'bg-cyan-500', headBg: 'bg-cyan-100', days: ['Mon4', 'Tue4', 'Wed4', 'Thu4', 'Fri4'] }
             ];
 
             let weeklyHTML = '';
             weeksData.forEach(w => {
                 weeklyHTML += `
-                <div class="w-full overflow-x-auto border border-gray-200 rounded-md">
-                    <table class="min-w-[500px] w-full border-collapse border border-black text-xs sm:text-sm text-center">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden w-full">
+                    <table class="compact-table text-center w-full">
                         <thead>
-                            <tr><th colspan="2" class="${w.color} border border-black py-1 w-1/4">Week ${w.id}</th><th colspan="5"></th></tr>
-                            <tr class="${w.color}">
-                                <th class="border border-black py-1 px-2">Position Code</th>
-                                <th class="border border-black py-1 px-1">Monday</th>
-                                <th class="border border-black py-1 px-1">Tuesday</th>
-                                <th class="border border-black py-1 px-1">Wednesday</th>
-                                <th class="border border-black py-1 px-1">Thursday</th>
-                                <th class="border border-black py-1 px-1">Friday</th>
-                                <th class="border border-black py-1 px-1">Average</th>
+                            <tr><th colspan="2" class="${w.titleBg} text-white font-bold py-1.5 sm:py-2 text-left">Week ${w.id}</th><th colspan="5" class="${w.titleBg}"></th></tr>
+                            <tr class="${w.headBg} text-gray-700 border-b border-gray-300">
+                                <th class="w-[20%] text-left">Position</th>
+                                <th class="w-[13%]">Mon</th>
+                                <th class="w-[13%]">Tue</th>
+                                <th class="w-[13%]">Wed</th>
+                                <th class="w-[13%]">Thu</th>
+                                <th class="w-[13%]">Fri</th>
+                                <th class="w-[15%] font-bold">Avg</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white">`;
@@ -292,10 +319,10 @@
                     const avg = (total / 5).toFixed(1);
 
                     weeklyHTML += `
-                        <tr>
-                            <td class="border border-black py-1 px-2 font-semibold whitespace-nowrap">${pc}</td>
-                            ${counts.map(c => `<td class="border border-black py-1 px-1">${c > 0 ? c : ''}</td>`).join('')}
-                            <td class="border border-black py-1 px-1 font-bold">${avg}</td>
+                        <tr class="border-b border-gray-100 last:border-0 hover:bg-gray-50">
+                            <td class="font-semibold text-gray-700 text-left">${pc}</td>
+                            ${counts.map((c, i) => `<td class="text-gray-600">${c > 0 ? c : '-'}</td>`).join('')}
+                            <td class="font-bold text-gray-800 bg-gray-50">${avg}</td>
                         </tr>`;
                 });
 
@@ -330,36 +357,46 @@
                 visitData[acc].total += (w1Visits + w2Visits + w3Visits + w4Visits);
             });
 
+            // FREQUENCY DATA RENDER
             let freqHTML = '';
             let freqGrandTotal = {1:0, 2:0, 3:0, 4:0, total:0};
             Object.keys(freqData).forEach(acc => {
                 let d = freqData[acc];
                 freqGrandTotal[1] += d[1]; freqGrandTotal[2] += d[2]; freqGrandTotal[3] += d[3]; freqGrandTotal[4] += d[4]; freqGrandTotal.total += d.total;
-                freqHTML += `<tr><td class="border border-black py-1 px-2 text-left bg-white whitespace-nowrap">${acc}</td>
-                             <td class="border border-black py-1 px-1 bg-white">${d[1] || ''}</td><td class="border border-black py-1 px-1 bg-white">${d[2] || ''}</td>
-                             <td class="border border-black py-1 px-1 bg-white">${d[3] || ''}</td><td class="border border-black py-1 px-1 bg-white">${d[4] || ''}</td>
-                             <td class="border border-black py-1 px-2 font-bold bg-blue-50">${d.total || ''}</td></tr>`;
+                freqHTML += `<tr class="border-b border-gray-100 hover:bg-gray-50">
+                             <td class="text-left font-semibold text-gray-700">${acc}</td>
+                             <td class="text-gray-600">${d[1] || '-'}</td>
+                             <td class="text-gray-600">${d[2] || '-'}</td>
+                             <td class="text-gray-600">${d[3] || '-'}</td>
+                             <td class="text-gray-600">${d[4] || '-'}</td>
+                             <td class="font-bold bg-blue-50 text-blue-800">${d.total || '0'}</td></tr>`;
             });
-            freqHTML += `<tr class="bg-blue-300 font-bold"><td class="border border-black py-1 px-2 text-left">Grand Total</td>
-                         <td class="border border-black py-1 px-1">${freqGrandTotal[1]}</td><td class="border border-black py-1 px-1">${freqGrandTotal[2]}</td>
-                         <td class="border border-black py-1 px-1">${freqGrandTotal[3]}</td><td class="border border-black py-1 px-1">${freqGrandTotal[4]}</td>
-                         <td class="border border-black py-1 px-2">${freqGrandTotal.total}</td></tr>`;
+            freqHTML += `<tr class="bg-blue-100 font-bold">
+                         <td class="text-left text-blue-900">Total</td>
+                         <td>${freqGrandTotal[1]}</td><td>${freqGrandTotal[2]}</td>
+                         <td>${freqGrandTotal[3]}</td><td>${freqGrandTotal[4]}</td>
+                         <td>${freqGrandTotal.total}</td></tr>`;
             document.getElementById('pivot-freq-body').innerHTML = freqHTML;
 
+            // WEEKLY VISITS DATA RENDER
             let visitHTML = '';
             let visitGrandTotal = {1:0, 2:0, 3:0, 4:0, total:0};
             Object.keys(visitData).forEach(acc => {
                 let d = visitData[acc];
                 visitGrandTotal[1] += d[1]; visitGrandTotal[2] += d[2]; visitGrandTotal[3] += d[3]; visitGrandTotal[4] += d[4]; visitGrandTotal.total += d.total;
-                visitHTML += `<tr><td class="border border-black py-1 px-2 text-left bg-white whitespace-nowrap">${acc}</td>
-                             <td class="border border-black py-1 px-1 bg-white">${d[1]}</td><td class="border border-black py-1 px-1 bg-white">${d[2]}</td>
-                             <td class="border border-black py-1 px-1 bg-white">${d[3]}</td><td class="border border-black py-1 px-1 bg-white">${d[4]}</td>
-                             <td class="border border-black py-1 px-2 font-bold bg-gray-100">${d.total}</td></tr>`;
+                visitHTML += `<tr class="border-b border-gray-100 hover:bg-gray-50">
+                             <td class="text-left font-semibold text-gray-700">${acc}</td>
+                             <td class="text-gray-600">${d[1] || '-'}</td>
+                             <td class="text-gray-600">${d[2] || '-'}</td>
+                             <td class="text-gray-600">${d[3] || '-'}</td>
+                             <td class="text-gray-600">${d[4] || '-'}</td>
+                             <td class="font-bold bg-gray-100 text-gray-800">${d.total || '0'}</td></tr>`;
             });
-            visitHTML += `<tr class="bg-gray-500 text-white font-bold"><td class="border border-black py-1 px-2 text-left">Total</td>
-                         <td class="border border-black py-1 px-1">${visitGrandTotal[1]}</td><td class="border border-black py-1 px-1">${visitGrandTotal[2]}</td>
-                         <td class="border border-black py-1 px-1">${visitGrandTotal[3]}</td><td class="border border-black py-1 px-1">${visitGrandTotal[4]}</td>
-                         <td class="border border-black py-1 px-2">${visitGrandTotal.total}</td></tr>`;
+            visitHTML += `<tr class="bg-gray-200 font-bold">
+                         <td class="text-left text-gray-900">Overall</td>
+                         <td>${visitGrandTotal[1]}</td><td>${visitGrandTotal[2]}</td>
+                         <td>${visitGrandTotal[3]}</td><td>${visitGrandTotal[4]}</td>
+                         <td>${visitGrandTotal.total}</td></tr>`;
             document.getElementById('pivot-visit-body').innerHTML = visitHTML;
         }
     </script>
