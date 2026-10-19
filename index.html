@@ -4,51 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Route List Planner</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- SheetJS para sa Excel -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <!-- Chart.js para sa Graphs -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
         body, html { overflow-x: hidden; }
         
-        .compact-table {
-            width: 100%;
-            table-layout: fixed; 
-        }
-        
+        .compact-table { width: 100%; table-layout: fixed; }
         .compact-table th, .compact-table td {
-            word-wrap: break-word; 
-            overflow-wrap: break-word;
-            padding: 0.35rem 0.25rem; 
-            font-size: 0.65rem; 
-            vertical-align: middle;
+            word-wrap: break-word; overflow-wrap: break-word;
+            padding: 0.35rem 0.25rem; font-size: 0.65rem; vertical-align: middle;
         }
 
         @media (min-width: 640px) {
-            .compact-table {
-                table-layout: auto; 
-            }
-            .compact-table th, .compact-table td {
-                padding: 0.75rem 1rem;
-                font-size: 0.875rem; 
-            }
+            .compact-table { table-layout: auto; }
+            .compact-table th, .compact-table td { padding: 0.75rem 1rem; font-size: 0.875rem; }
         }
         
-        .account-logo {
-            max-height: 1.25rem; 
-            width: auto;
-            max-width: 100%;
-            object-fit: contain; 
-            display: inline-block;
-        }
-        @media (min-width: 640px) {
-            .account-logo {
-                max-height: 1.5rem; 
-            }
-        }
+        .account-logo { max-height: 1.25rem; width: auto; max-width: 100%; object-fit: contain; display: inline-block; }
+        @media (min-width: 640px) { .account-logo { max-height: 1.5rem; } }
 
         details > summary { list-style: none; }
         details > summary::-webkit-details-marker { display: none; }
@@ -220,27 +195,29 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
                 <!-- Bar Chart -->
-                <div class="border border-gray-200 rounded-xl p-4 shadow-sm relative h-72 sm:h-80 w-full">
+                <div class="border border-gray-200 rounded-xl p-4 shadow-sm relative w-full flex flex-col">
                     <h3 class="text-center text-sm font-bold text-gray-700 mb-2">Daily Breakdown</h3>
-                    <canvas id="barChart"></canvas>
+                    <div class="relative flex-1 min-h-[200px] sm:min-h-[250px]"><canvas id="barChart"></canvas></div>
+                    <!-- Bar Chart Analysis Text -->
+                    <div id="barChartAnalysis" class="mt-4 p-3 bg-blue-50 text-blue-800 text-xs sm:text-sm rounded-lg border border-blue-100 leading-relaxed hidden"></div>
                 </div>
                 <!-- Doughnut Chart -->
-                <div class="border border-gray-200 rounded-xl p-4 shadow-sm relative h-72 sm:h-80 w-full">
+                <div class="border border-gray-200 rounded-xl p-4 shadow-sm relative w-full flex flex-col">
                     <h3 class="text-center text-sm font-bold text-gray-700 mb-2">Total Weekly Distribution</h3>
-                    <canvas id="doughnutChart"></canvas>
+                    <div class="relative flex-1 min-h-[200px] sm:min-h-[250px]"><canvas id="doughnutChart"></canvas></div>
+                    <!-- Doughnut Chart Analysis Text -->
+                    <div id="doughnutChartAnalysis" class="mt-4 p-3 bg-emerald-50 text-emerald-800 text-xs sm:text-sm rounded-lg border border-emerald-100 leading-relaxed hidden"></div>
                 </div>
             </div>
         </div>
 
     </div>
 
-    <!-- ================= CUSTOMER INFO MODAL (Lookup Tab) ================= -->
+    <!-- ================= MODALS ================= -->
     <div id="customerModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-50 hidden flex items-center justify-center p-4 transition-opacity">
         <div class="bg-white rounded-xl shadow-xl max-w-sm w-full p-5 sm:p-6 relative">
             <button id="closeModalBtn" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600 focus:outline-none">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
             <h3 class="text-lg font-bold text-gray-800 mb-4 border-b border-gray-200 pb-2 text-center">Customer Details</h3>
             <div id="modalContent" class="space-y-3 text-sm text-gray-700"></div>
@@ -250,20 +227,15 @@
         </div>
     </div>
 
-    <!-- ================= WEEKLY DETAILS ACCORDION MODAL (Pivot Tab) ================= -->
     <div id="weeklyModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-50 hidden flex items-center justify-center p-4 transition-opacity">
         <div class="bg-white rounded-xl shadow-xl max-w-lg w-full relative flex flex-col max-h-[85vh]">
             <div id="weeklyModalHeader" class="rounded-t-xl px-4 py-3 sm:px-5 sm:py-4 flex justify-between items-center transition-colors">
                 <h3 id="weeklyModalTitle" class="text-lg font-bold text-white">Week Details</h3>
                 <button id="closeWeeklyModalBtn" class="text-white hover:text-gray-200 focus:outline-none">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
             </div>
-            
             <div id="weeklyModalContent" class="p-4 sm:p-5 overflow-y-auto space-y-3 bg-gray-50 flex-1"></div>
-            
             <div class="p-4 border-t border-gray-200 text-center bg-white rounded-b-xl">
                 <button id="closeWeeklyModalBtnBottom" class="bg-gray-100 border border-gray-300 text-gray-700 hover:bg-gray-200 px-6 py-2 rounded-lg text-sm font-semibold transition w-full sm:w-auto">Close</button>
             </div>
@@ -291,6 +263,9 @@
 
         const graphWeekSelector = document.getElementById('graphWeekSelector');
         const graphCategorySelector = document.getElementById('graphCategorySelector');
+        
+        const barChartAnalysis = document.getElementById('barChartAnalysis');
+        const doughnutChartAnalysis = document.getElementById('doughnutChartAnalysis');
 
         // Modal Elements
         const customerModal = document.getElementById('customerModal');
@@ -312,14 +287,9 @@
             'Mon4', 'Tue4', 'Wed4', 'Thu4', 'Fri4', 'Sat4', 'Sun4'
         ];
 
-        // Custom Colors for Charts
-        const chartColors = [
-            '#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', 
-            '#06b6d4', '#ec4899', '#6366f1', '#14b8a6', '#f43f5e'
-        ];
+        const chartColors = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#06b6d4', '#ec4899', '#6366f1', '#14b8a6', '#f43f5e'];
 
         function switchTab(activeTabStr) {
-            // Reset styles
             [tabLookup, tabPivot, tabGraphs].forEach(t => {
                 t.classList.remove('border-blue-600', 'text-blue-600');
                 t.classList.add('text-gray-500', 'border-transparent');
@@ -328,16 +298,13 @@
 
             if (activeTabStr === 'lookup') {
                 tabLookup.classList.add('border-blue-600', 'text-blue-600');
-                tabLookup.classList.remove('text-gray-500', 'border-transparent');
                 secLookup.classList.remove('hidden');
             } else if (activeTabStr === 'pivot') {
                 tabPivot.classList.add('border-blue-600', 'text-blue-600');
-                tabPivot.classList.remove('text-gray-500', 'border-transparent');
                 secPivot.classList.remove('hidden');
                 if(globalExcelData.length > 0) generateDynamicPivot(globalExcelData);
             } else if (activeTabStr === 'graphs') {
                 tabGraphs.classList.add('border-blue-600', 'text-blue-600');
-                tabGraphs.classList.remove('text-gray-500', 'border-transparent');
                 secGraphs.classList.remove('hidden');
                 if(globalExcelData.length > 0) renderGraphs();
             }
@@ -374,9 +341,7 @@
                 if(!workbook.SheetNames.includes(sheetName)) {
                     uploadStatus.innerHTML = `Error: Sheet not found. <br><span class="text-red-700">Make sure the exact tab name is <b>"IC003CAB OCTOBER - FINAL"</b> to enable the lookup.</span>`;
                     uploadStatus.className = "mt-1 sm:mt-2 text-red-600 font-semibold text-[10px] sm:text-sm";
-                    daySelector.disabled = true;
-                    graphWeekSelector.disabled = true;
-                    graphCategorySelector.disabled = true;
+                    daySelector.disabled = true; graphWeekSelector.disabled = true; graphCategorySelector.disabled = true;
                     return;
                 }
                 
@@ -384,9 +349,7 @@
                 uploadStatus.innerHTML = `Success! Data loaded.`;
                 uploadStatus.className = "mt-1 sm:mt-2 text-green-600 font-semibold text-[10px] sm:text-sm";
 
-                daySelector.disabled = false;
-                graphWeekSelector.disabled = false;
-                graphCategorySelector.disabled = false;
+                daySelector.disabled = false; graphWeekSelector.disabled = false; graphCategorySelector.disabled = false;
                 
                 if(daySelector.value) performSearch();
                 if(!secPivot.classList.contains('hidden')) generateDynamicPivot(globalExcelData);
@@ -444,9 +407,7 @@
 
             let scheduleList = [];
             allDays.forEach(day => {
-                if (isValidCell(rowData[day])) {
-                    scheduleList.push(day.replace(/(\D+)(\d+)/, '$1 $2'));
-                }
+                if (isValidCell(rowData[day])) scheduleList.push(day.replace(/(\D+)(\d+)/, '$1 $2'));
             });
 
             modalContent.innerHTML = `
@@ -665,13 +626,11 @@
             const daysToFilter = [`Mon${weekId}`, `Tue${weekId}`, `Wed${weekId}`, `Thu${weekId}`, `Fri${weekId}`];
             const dayLabels = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 
-            // Prepare Data structures
             let catCountTotal = {}; 
             let catCountPerDay = {};
 
             globalExcelData.forEach(row => {
                 let hasVisitThisWeek = false;
-                // Check if any valid schedule exists in this week for this row
                 daysToFilter.forEach(d => { if(isValidCell(row[d])) hasVisitThisWeek = true; });
                 
                 if(hasVisitThisWeek) {
@@ -689,14 +648,45 @@
                 }
             });
 
-            // Extract Labels and Datasets
             const categories = Object.keys(catCountTotal);
             
-            // Doughnut Data
+            // INSIGHTS COMPUTATION - BAR CHART (Daily Breakdown)
+            let dailyTotals = [0, 0, 0, 0, 0];
+            categories.forEach(cat => {
+                catCountPerDay[cat].forEach((val, i) => { dailyTotals[i] += val; });
+            });
+            
+            let totalWeekVisits = dailyTotals.reduce((a, b) => a + b, 0);
+            
+            if (totalWeekVisits > 0) {
+                let maxVal = Math.max(...dailyTotals);
+                let minVal = Math.min(...dailyTotals);
+                let maxDayNames = dailyTotals.map((val, idx) => val === maxVal ? dayLabels[idx] : null).filter(v => v !== null);
+                let minDayNames = dailyTotals.map((val, idx) => val === minVal ? dayLabels[idx] : null).filter(v => v !== null);
+
+                barChartAnalysis.innerHTML = `<b>💡 Insight:</b> Ang pinakamaraming schedule ngayong Week ${weekId} ay tuwing <b>${maxDayNames.join(' at ')}</b> na may <b>${maxVal}</b> visits. Ang pinakakonti naman ay tuwing <b>${minDayNames.join(' at ')}</b> na may <b>${minVal}</b> visits.`;
+                barChartAnalysis.classList.remove('hidden');
+            } else {
+                barChartAnalysis.innerHTML = `<b>💡 Insight:</b> Walang nakitang schedule sa linggong ito.`;
+                barChartAnalysis.classList.remove('hidden');
+            }
+
+            // INSIGHTS COMPUTATION - DOUGHNUT CHART (Total Distribution)
+            let sortedCategories = categories.map(c => ({ name: c, count: catCountTotal[c] })).sort((a, b) => b.count - a.count);
+            
+            if (sortedCategories.length > 0 && totalWeekVisits > 0) {
+                let topCat = sortedCategories[0];
+                let percent = ((topCat.count / totalWeekVisits) * 100).toFixed(1);
+                doughnutChartAnalysis.innerHTML = `<b>💡 Insight:</b> Sa linggong ito, nangunguna ang <b>${topCat.name}</b> na may pinakamaraming binibisitang schedule. Binubuo nito ang <b>${percent}%</b> (${topCat.count} visits) ng kabuuang ruta mo sa Week ${weekId}.`;
+                doughnutChartAnalysis.classList.remove('hidden');
+            } else {
+                doughnutChartAnalysis.innerHTML = `<b>💡 Insight:</b> Walang data para sa kategoryang ito.`;
+                doughnutChartAnalysis.classList.remove('hidden');
+            }
+
             const doughnutLabels = categories;
             const doughnutDataVals = categories.map(c => catCountTotal[c]);
 
-            // Bar Data (Stacked)
             const barDatasets = categories.map((cat, i) => {
                 return {
                     label: cat,
@@ -706,27 +696,18 @@
                 };
             });
 
-            // Re-render Bar Chart
             if (myBarChart) myBarChart.destroy();
             const ctxBar = document.getElementById('barChart').getContext('2d');
             myBarChart = new Chart(ctxBar, {
                 type: 'bar',
-                data: {
-                    labels: dayLabels,
-                    datasets: barDatasets
-                },
+                data: { labels: dayLabels, datasets: barDatasets },
                 options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
+                    responsive: true, maintainAspectRatio: false,
                     plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } } },
-                    scales: {
-                        x: { stacked: true },
-                        y: { stacked: true, beginAtZero: true, ticks: { precision: 0 } }
-                    }
+                    scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true, ticks: { precision: 0 } } }
                 }
             });
 
-            // Re-render Doughnut Chart
             if (myDoughnutChart) myDoughnutChart.destroy();
             const ctxDoughnut = document.getElementById('doughnutChart').getContext('2d');
             myDoughnutChart = new Chart(ctxDoughnut, {
@@ -736,13 +717,11 @@
                     datasets: [{
                         data: doughnutDataVals,
                         backgroundColor: chartColors.slice(0, categories.length),
-                        borderWidth: 2,
-                        hoverOffset: 4
+                        borderWidth: 2, hoverOffset: 4
                     }]
                 },
                 options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
+                    responsive: true, maintainAspectRatio: false,
                     plugins: { legend: { position: 'right', labels: { boxWidth: 12, font: { size: 10 } } } }
                 }
             });
