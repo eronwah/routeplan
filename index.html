@@ -14,8 +14,16 @@
     <style>
         body, html { overflow-x: hidden; }
         
+        /* Table Layout for Fixed (Lookup) */
         .compact-table { width: 100%; table-layout: fixed; }
         .compact-table th, .compact-table td {
+            word-wrap: break-word; overflow-wrap: break-word;
+            padding: 0.35rem 0.25rem; font-size: 0.65rem; vertical-align: middle;
+        }
+
+        /* Table Layout for Auto-Adjust (Dynamic Pivot) */
+        .auto-table { width: 100%; table-layout: auto; }
+        .auto-table th, .auto-table td {
             word-wrap: break-word; overflow-wrap: break-word;
             padding: 0.35rem 0.25rem; font-size: 0.65rem; vertical-align: middle;
         }
@@ -23,6 +31,8 @@
         @media (min-width: 640px) {
             .compact-table { table-layout: auto; }
             .compact-table th, .compact-table td { padding: 0.75rem 1rem; font-size: 0.875rem; }
+            
+            .auto-table th, .auto-table td { padding: 0.75rem 1rem; font-size: 0.875rem; }
         }
         
         .account-logo { max-height: 1.25rem; width: auto; max-width: 100%; object-fit: contain; display: inline-block; }
@@ -51,7 +61,7 @@
             <p id="uploadStatus" class="mt-1 sm:mt-2 text-[10px] sm:text-sm text-gray-500 italic">Waiting for file...</p>
         </div>
 
-        <!-- Navigation Tabs (With Highlight Logic) -->
+        <!-- Navigation Tabs -->
         <div class="flex space-x-1 sm:space-x-2 border-b border-gray-300 mb-4 sm:mb-6 w-full overflow-x-auto hide-scroll">
             <button class="py-2 px-3 sm:px-5 text-blue-700 border-b-2 border-blue-700 bg-blue-50 font-bold rounded-t-md transition text-xs sm:text-sm whitespace-nowrap" id="tab-lookup">Lookup Route</button>
             <button class="py-2 px-3 sm:px-5 text-gray-500 border-b-2 border-transparent font-semibold hover:text-blue-600 transition text-xs sm:text-sm whitespace-nowrap" id="tab-pivot">Dynamic Pivot</button>
@@ -74,6 +84,7 @@
                         <option value="Fri1">Friday 1 (Fri1)</option>
                         <option value="Sat1">Saturday 1 (Sat1)</option>
                         <option value="Sun1">Sunday 1 (Sun1)</option>
+                        
                         <option value="Mon2">Monday 2 (Mon2)</option>
                         <option value="Tue2">Tuesday 2 (Tue2)</option>
                         <option value="Wed2">Wednesday 2 (Wed2)</option>
@@ -81,6 +92,7 @@
                         <option value="Fri2">Friday 2 (Fri2)</option>
                         <option value="Sat2">Saturday 2 (Sat2)</option>
                         <option value="Sun2">Sunday 2 (Sun2)</option>
+                        
                         <option value="Mon3">Monday 3 (Mon3)</option>
                         <option value="Tue3">Tuesday 3 (Tue3)</option>
                         <option value="Wed3">Wednesday 3 (Wed3)</option>
@@ -88,6 +100,7 @@
                         <option value="Fri3">Friday 3 (Fri3)</option>
                         <option value="Sat3">Saturday 3 (Sat3)</option>
                         <option value="Sun3">Sunday 3 (Sun3)</option>
+                        
                         <option value="Mon4">Monday 4 (Mon4)</option>
                         <option value="Tue4">Tuesday 4 (Tue4)</option>
                         <option value="Wed4">Wednesday 4 (Wed4)</option>
@@ -135,12 +148,16 @@
 
                 <div class="w-full flex flex-col gap-4 sm:gap-6">
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden w-full">
-                        <table class="compact-table text-center w-full">
+                        <table class="auto-table text-center w-full">
                             <thead>
-                                <tr><th colspan="6" class="bg-blue-500 text-white font-bold py-1.5 sm:py-2">Count of Frequency</th></tr>
+                                <tr><th colspan="6" class="bg-blue-500 text-white font-bold py-1.5 sm:py-2 text-center">Count of Frequency</th></tr>
                                 <tr class="bg-blue-100 text-gray-700 border-b border-gray-300">
-                                    <th class="text-left font-bold w-[30%]">Account</th>
-                                    <th class="font-bold w-[12%]">1</th><th class="font-bold w-[12%]">2</th><th class="font-bold w-[12%]">3</th><th class="font-bold w-[12%]">4</th><th class="font-bold w-[22%]">Total</th>
+                                    <th class="text-center font-bold px-2 w-auto">Account</th>
+                                    <th class="font-bold w-[12%] sm:w-[10%] text-center">1</th>
+                                    <th class="font-bold w-[12%] sm:w-[10%] text-center">2</th>
+                                    <th class="font-bold w-[12%] sm:w-[10%] text-center">3</th>
+                                    <th class="font-bold w-[12%] sm:w-[10%] text-center">4</th>
+                                    <th class="font-bold w-[20%] sm:w-[15%] text-center">Total</th>
                                 </tr>
                             </thead>
                             <tbody id="pivot-freq-body">
@@ -150,12 +167,16 @@
                     </div>
 
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden w-full">
-                        <table class="compact-table text-center w-full">
+                        <table class="auto-table text-center w-full">
                             <thead>
-                                <tr><th colspan="6" class="bg-gray-600 text-white font-bold py-1.5 sm:py-2">Weekly visit count per Account</th></tr>
+                                <tr><th colspan="6" class="bg-gray-600 text-white font-bold py-1.5 sm:py-2 text-center">Weekly visit count per Account</th></tr>
                                 <tr class="bg-gray-100 text-gray-700 border-b border-gray-300">
-                                    <th class="text-left font-bold w-[30%]">Account</th>
-                                    <th class="font-bold w-[12%]">1</th><th class="font-bold w-[12%]">2</th><th class="font-bold w-[12%]">3</th><th class="font-bold w-[12%]">4</th><th class="font-bold w-[22%]">Total</th>
+                                    <th class="text-center font-bold px-2 w-auto">Account</th>
+                                    <th class="font-bold w-[12%] sm:w-[10%] text-center">1</th>
+                                    <th class="font-bold w-[12%] sm:w-[10%] text-center">2</th>
+                                    <th class="font-bold w-[12%] sm:w-[10%] text-center">3</th>
+                                    <th class="font-bold w-[12%] sm:w-[10%] text-center">4</th>
+                                    <th class="font-bold w-[20%] sm:w-[15%] text-center">Total</th>
                                 </tr>
                             </thead>
                             <tbody id="pivot-visit-body">
@@ -199,7 +220,7 @@
                     <div id="barChartAnalysis" class="mt-4 p-3 bg-blue-50 text-blue-800 text-[10px] sm:text-xs rounded-lg border border-blue-100 leading-relaxed hidden"></div>
                 </div>
                 <!-- Doughnut Chart (With internal tip) -->
-                <div class="border border-gray-200 rounded-xl p-4 shadow-sm relative w-full flex flex-col bg-white">
+                <div class="border border-gray-200 rounded-xl p-4 shadow-sm relative w-full flex flex-col transition hover:shadow-md bg-white">
                     <h3 class="text-center text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Total Weekly Distribution</h3>
                     <hr class="border-gray-200 mb-2">
                     <p class="text-[10px] sm:text-xs text-gray-400 italic text-center mb-3">Double-click on the doughnut chart segment to view the detailed customer list.</p>
@@ -318,6 +339,7 @@
             'Mon4', 'Tue4', 'Wed4', 'Thu4', 'Fri4', 'Sat4', 'Sun4'
         ];
 
+        // Modern flat solid colors
         const chartColors = ['#2563eb', '#dc2626', '#059669', '#d97706', '#7c3aed', '#0891b2', '#db2777', '#4f46e5', '#0d9488', '#e11d48'];
 
         // TAB HIGHLIGHTING LOGIC
@@ -578,7 +600,6 @@
             const weekId = graphWeekSelector.value;
             let displayList = []; 
 
-            // Doughnut Chart Click: Whole Week (List all visits, matching the chart total exactly)
             const daysConfig = [
                 { code: `Mon${weekId}`, name: 'Monday' },
                 { code: `Tue${weekId}`, name: 'Tuesday' },
@@ -601,7 +622,6 @@
                 }
             });
             
-            // Set dynamic title
             graphModalTitle.innerHTML = `WEEK ${weekId} Total - <span class="text-blue-600">${categoryName}</span> - <span class="bg-gray-200 text-gray-800 px-2 py-0.5 rounded ml-1">${displayList.length}</span>`;
 
             let gridHtml = `
@@ -651,18 +671,22 @@
             weeksData.forEach(w => {
                 weeklyHTML += `
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden w-full">
-                    <table class="compact-table text-center w-full">
+                    <table class="auto-table text-center w-full">
                         <thead>
                             <tr>
-                                <th colspan="3" class="${w.titleBg} text-white font-bold py-1.5 sm:py-2 text-left pl-3 sm:pl-4">Week ${w.id}</th>
+                                <th colspan="3" class="${w.titleBg} text-white font-bold py-1.5 sm:py-2 text-center pl-3 sm:pl-4">Week ${w.id}</th>
                                 <th colspan="4" class="${w.titleBg} text-right pr-2 sm:pr-3">
                                     <button onclick="openWeeklyModal(${w.id})" class="bg-white ${w.textBtn} px-2 py-1 text-[10px] sm:text-xs rounded shadow-sm hover:bg-gray-50 transition font-bold whitespace-nowrap">More Details</button>
                                 </th>
                             </tr>
                             <tr class="${w.headBg} text-gray-700 border-b border-gray-300">
-                                <th class="w-[20%] text-left font-bold pl-2">Position</th>
-                                <th class="w-[13%] font-bold">Mon</th><th class="w-[13%] font-bold">Tue</th><th class="w-[13%] font-bold">Wed</th><th class="w-[13%] font-bold">Thu</th><th class="w-[13%] font-bold">Fri</th>
-                                <th class="w-[15%] font-bold">Avg</th>
+                                <th class="w-auto text-center font-bold px-2">Position</th>
+                                <th class="w-[12%] sm:w-[10%] text-center font-bold">Mon</th>
+                                <th class="w-[12%] sm:w-[10%] text-center font-bold">Tue</th>
+                                <th class="w-[12%] sm:w-[10%] text-center font-bold">Wed</th>
+                                <th class="w-[12%] sm:w-[10%] text-center font-bold">Thu</th>
+                                <th class="w-[12%] sm:w-[10%] text-center font-bold">Fri</th>
+                                <th class="w-[15%] sm:w-[12%] text-center font-bold px-1">Avg</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white">`;
@@ -675,9 +699,9 @@
 
                     weeklyHTML += `
                         <tr class="border-b border-gray-100 last:border-0 hover:bg-gray-50">
-                            <td class="font-bold text-gray-700 text-left pl-2">${pc}</td>
-                            ${counts.map((c) => `<td class="text-gray-600 font-semibold">${c > 0 ? c : '-'}</td>`).join('')}
-                            <td class="font-bold text-gray-800 bg-gray-50">${avg}</td>
+                            <td class="font-bold text-gray-700 text-left px-2">${pc}</td>
+                            ${counts.map((c) => `<td class="text-gray-600 font-semibold text-center">${c > 0 ? c : '-'}</td>`).join('')}
+                            <td class="font-bold text-gray-800 bg-gray-50 text-center">${avg}</td>
                         </tr>`;
                 });
                 weeklyHTML += `</tbody></table></div>`;
@@ -709,11 +733,20 @@
                 let d = freqData[acc];
                 freqGrandTotal[1] += d[1]; freqGrandTotal[2] += d[2]; freqGrandTotal[3] += d[3]; freqGrandTotal[4] += d[4]; freqGrandTotal.total += d.total;
                 freqHTML += `<tr class="border-b border-gray-100 hover:bg-gray-50">
-                             <td class="text-left font-bold text-gray-700 pl-2">${acc}</td>
-                             <td class="text-gray-600 font-semibold">${d[1] || '-'}</td><td class="text-gray-600 font-semibold">${d[2] || '-'}</td><td class="text-gray-600 font-semibold">${d[3] || '-'}</td><td class="text-gray-600 font-semibold">${d[4] || '-'}</td>
-                             <td class="font-bold bg-blue-50 text-blue-800">${d.total || '0'}</td></tr>`;
+                             <td class="text-left font-bold text-gray-700 px-2 w-auto whitespace-nowrap">${acc}</td>
+                             <td class="text-gray-600 font-semibold text-center">${d[1] || '-'}</td>
+                             <td class="text-gray-600 font-semibold text-center">${d[2] || '-'}</td>
+                             <td class="text-gray-600 font-semibold text-center">${d[3] || '-'}</td>
+                             <td class="text-gray-600 font-semibold text-center">${d[4] || '-'}</td>
+                             <td class="font-bold bg-blue-50 text-blue-800 text-center">${d.total || '0'}</td></tr>`;
             });
-            freqHTML += `<tr class="bg-blue-100 font-bold"><td class="text-left text-blue-900 pl-2">Total</td><td>${freqGrandTotal[1]}</td><td>${freqGrandTotal[2]}</td><td>${freqGrandTotal[3]}</td><td>${freqGrandTotal[4]}</td><td>${freqGrandTotal.total}</td></tr>`;
+            freqHTML += `<tr class="bg-blue-100 font-bold">
+                         <td class="text-left text-blue-900 px-2">Total</td>
+                         <td class="text-center">${freqGrandTotal[1]}</td>
+                         <td class="text-center">${freqGrandTotal[2]}</td>
+                         <td class="text-center">${freqGrandTotal[3]}</td>
+                         <td class="text-center">${freqGrandTotal[4]}</td>
+                         <td class="text-center">${freqGrandTotal.total}</td></tr>`;
             document.getElementById('pivot-freq-body').innerHTML = freqHTML;
 
             let visitHTML = ''; let visitGrandTotal = {1:0, 2:0, 3:0, 4:0, total:0};
@@ -721,11 +754,20 @@
                 let d = visitData[acc];
                 visitGrandTotal[1] += d[1]; visitGrandTotal[2] += d[2]; visitGrandTotal[3] += d[3]; visitGrandTotal[4] += d[4]; visitGrandTotal.total += d.total;
                 visitHTML += `<tr class="border-b border-gray-100 hover:bg-gray-50">
-                             <td class="text-left font-bold text-gray-700 pl-2">${acc}</td>
-                             <td class="text-gray-600 font-semibold">${d[1] || '-'}</td><td class="text-gray-600 font-semibold">${d[2] || '-'}</td><td class="text-gray-600 font-semibold">${d[3] || '-'}</td><td class="text-gray-600 font-semibold">${d[4] || '-'}</td>
-                             <td class="font-bold bg-gray-100 text-gray-800">${d.total || '0'}</td></tr>`;
+                             <td class="text-left font-bold text-gray-700 px-2 w-auto whitespace-nowrap">${acc}</td>
+                             <td class="text-gray-600 font-semibold text-center">${d[1] || '-'}</td>
+                             <td class="text-gray-600 font-semibold text-center">${d[2] || '-'}</td>
+                             <td class="text-gray-600 font-semibold text-center">${d[3] || '-'}</td>
+                             <td class="text-gray-600 font-semibold text-center">${d[4] || '-'}</td>
+                             <td class="font-bold bg-gray-100 text-gray-800 text-center">${d.total || '0'}</td></tr>`;
             });
-            visitHTML += `<tr class="bg-gray-200 font-bold"><td class="text-left text-gray-900 pl-2">Overall</td><td>${visitGrandTotal[1]}</td><td>${visitGrandTotal[2]}</td><td>${visitGrandTotal[3]}</td><td>${visitGrandTotal[4]}</td><td>${visitGrandTotal.total}</td></tr>`;
+            visitHTML += `<tr class="bg-gray-200 font-bold">
+                         <td class="text-left text-gray-900 px-2">Overall</td>
+                         <td class="text-center">${visitGrandTotal[1]}</td>
+                         <td class="text-center">${visitGrandTotal[2]}</td>
+                         <td class="text-center">${visitGrandTotal[3]}</td>
+                         <td class="text-center">${visitGrandTotal[4]}</td>
+                         <td class="text-center">${visitGrandTotal.total}</td></tr>`;
             document.getElementById('pivot-visit-body').innerHTML = visitHTML;
         }
 
@@ -807,7 +849,7 @@
                 };
             });
 
-            // Re-render Bar Chart (Removed double click modal logic)
+            // Re-render Bar Chart (No double click)
             if (myBarChart) myBarChart.destroy();
             const ctxBar = document.getElementById('barChart').getContext('2d');
             myBarChart = new Chart(ctxBar, {
@@ -827,7 +869,7 @@
                 }
             });
 
-            // Re-render Doughnut Chart
+            // Re-render Doughnut Chart (With Double Click)
             if (myDoughnutChart) myDoughnutChart.destroy();
             const ctxDoughnut = document.getElementById('doughnutChart').getContext('2d');
             myDoughnutChart = new Chart(ctxDoughnut, {
@@ -845,7 +887,7 @@
                     responsive: true, maintainAspectRatio: false,
                     cutout: '60%',
                     plugins: { 
-                        legend: { position: 'right', labels: { boxWidth: 10, usePointStyle: true, pointStyle: 'circle', font: {weight: 'bold'} } },
+                        legend: { position: 'top', align: 'center', labels: { boxWidth: 10, usePointStyle: true, pointStyle: 'circle', font: {weight: 'bold'} } },
                         tooltip: { backgroundColor: '#1f2937', titleFont: { size: 13, weight: 'bold' }, bodyFont: { size: 12 }, padding: 12, cornerRadius: 4 }
                     },
                     onClick: (e, activeEls) => {
