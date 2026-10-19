@@ -132,10 +132,12 @@
             </div>
 
             <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6 w-full">
+                <!-- Left Column -->
                 <div class="w-full">
                     <div id="pivot-weekly-tables" class="w-full flex flex-col gap-3 sm:gap-5"></div>
                 </div>
 
+                <!-- Right Column -->
                 <div class="w-full flex flex-col gap-4 sm:gap-6">
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden w-full">
                         <table class="compact-table text-center w-full">
@@ -194,19 +196,21 @@
                 </div>
             </div>
             
-            <p class="text-[10px] sm:text-xs text-gray-400 italic mb-4 text-center sm:text-left">Double-click on any chart segment to view the detailed customer list.</p>
+            <p class="text-[10px] sm:text-xs text-gray-400 italic mb-4 text-center sm:text-left">Double-click on the doughnut chart segment to view the detailed customer list.</p>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
                 <!-- Bar Chart -->
                 <div class="border border-gray-200 rounded-xl p-4 shadow-sm relative w-full flex flex-col transition hover:shadow-md bg-white">
                     <h3 class="text-center text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Daily Breakdown</h3>
                     <div class="relative flex-1 min-h-[200px] sm:min-h-[250px]"><canvas id="barChart"></canvas></div>
+                    <!-- Bar Chart Analysis Text (English) -->
                     <div id="barChartAnalysis" class="mt-4 p-3 bg-blue-50 text-blue-800 text-[10px] sm:text-xs rounded-lg border border-blue-100 leading-relaxed hidden"></div>
                 </div>
                 <!-- Doughnut Chart -->
                 <div class="border border-gray-200 rounded-xl p-4 shadow-sm relative w-full flex flex-col transition hover:shadow-md bg-white">
                     <h3 class="text-center text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Total Weekly Distribution</h3>
                     <div class="relative flex-1 min-h-[200px] sm:min-h-[250px]"><canvas id="doughnutChart"></canvas></div>
+                    <!-- Doughnut Chart Analysis Text (English) -->
                     <div id="doughnutChartAnalysis" class="mt-4 p-3 bg-emerald-50 text-emerald-800 text-[10px] sm:text-xs rounded-lg border border-emerald-100 leading-relaxed hidden"></div>
                 </div>
             </div>
@@ -248,7 +252,6 @@
     <div id="graphModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-50 hidden flex items-center justify-center p-4 transition-opacity">
         <div class="bg-white rounded-xl shadow-xl max-w-md w-full relative flex flex-col max-h-[85vh]">
             <div class="px-4 py-3 sm:px-4 sm:py-4 flex justify-between items-center bg-gray-50 border-b border-gray-200 rounded-t-xl">
-                <!-- Dito ilalagay ang total count -->
                 <h3 id="graphModalTitle" class="text-[13px] sm:text-sm font-bold text-gray-800 uppercase tracking-wide"></h3>
                 <button id="closeGraphModalBtn" class="text-gray-400 hover:text-gray-600 focus:outline-none ml-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
@@ -256,7 +259,6 @@
             </div>
             
             <div class="p-4 sm:p-5 overflow-y-auto flex-1">
-                <!-- Gumamit ng auto_1fr para sumakto sa width ng Code ang Column 1 -->
                 <div class="grid grid-cols-[auto_1fr] gap-x-4 text-xs sm:text-sm min-w-full" id="graphModalContent">
                     <!-- Injected Content -->
                 </div>
@@ -558,51 +560,36 @@
         closeWeeklyModalBtnBottom.addEventListener('click', hideWeeklyModal);
         weeklyModal.addEventListener('click', (e) => { if (e.target === weeklyModal) hideWeeklyModal(); });
 
-
         // ================= GRAPH MODAL LIST LOGIC =================
-        window.openGraphModalList = function(categoryName, dayCode, displayDayStr) {
+        window.openGraphModalList = function(categoryName) {
             const categoryCol = graphCategorySelector.value;
             const weekId = graphWeekSelector.value;
             let displayList = []; 
 
-            if (dayCode) {
-                // Bar Chart Click: Specific Day
-                globalExcelData.forEach(row => {
-                    if (isValidCell(row[dayCode]) && String(row[categoryCol] || 'Unknown') === categoryName) {
-                        displayList.push({
-                            code: row['CustomerCode'] || '-',
-                            name: row['Customer Name'] || '-',
-                            day: displayDayStr
-                        });
-                    }
-                });
-                graphModalTitle.innerHTML = `${displayDayStr} - <span class="text-blue-600">${categoryName}</span> - <span class="bg-gray-200 text-gray-700 px-2 py-0.5 rounded ml-1">${displayList.length}</span>`;
-            } else {
-                // Doughnut Chart Click: Whole Week (List all visits, so it matches the chart total exactly)
-                const daysConfig = [
-                    { code: `Mon${weekId}`, name: 'Monday' },
-                    { code: `Tue${weekId}`, name: 'Tuesday' },
-                    { code: `Wed${weekId}`, name: 'Wednesday' },
-                    { code: `Thu${weekId}`, name: 'Thursday' },
-                    { code: `Fri${weekId}`, name: 'Friday' }
-                ];
-                
-                globalExcelData.forEach(row => {
-                    if (String(row[categoryCol] || 'Unknown') === categoryName) {
-                        // Idagdag ang bawat araw na may schedule siya para tumugma ang bilang
-                        daysConfig.forEach(d => {
-                            if(isValidCell(row[d.code])) {
-                                displayList.push({
-                                    code: row['CustomerCode'] || '-',
-                                    name: row['Customer Name'] || '-',
-                                    day: d.name
-                                });
-                            }
-                        });
-                    }
-                });
-                graphModalTitle.innerHTML = `WEEK ${weekId} TOTAL - <span class="text-blue-600">${categoryName}</span> - <span class="bg-gray-200 text-gray-700 px-2 py-0.5 rounded ml-1">${displayList.length}</span>`;
-            }
+            // Doughnut Chart Click: Whole Week (List all visits, so it matches the chart total exactly)
+            const daysConfig = [
+                { code: `Mon${weekId}`, name: 'Monday' },
+                { code: `Tue${weekId}`, name: 'Tuesday' },
+                { code: `Wed${weekId}`, name: 'Wednesday' },
+                { code: `Thu${weekId}`, name: 'Thursday' },
+                { code: `Fri${weekId}`, name: 'Friday' }
+            ];
+            
+            globalExcelData.forEach(row => {
+                if (String(row[categoryCol] || 'Unknown') === categoryName) {
+                    daysConfig.forEach(d => {
+                        if(isValidCell(row[d.code])) {
+                            displayList.push({
+                                code: row['CustomerCode'] || '-',
+                                name: row['Customer Name'] || '-',
+                                day: d.name
+                            });
+                        }
+                    });
+                }
+            });
+            
+            graphModalTitle.innerHTML = `WEEK ${weekId} TOTAL - <span class="text-blue-600">${categoryName}</span> - <span class="bg-gray-200 text-gray-700 px-2 py-0.5 rounded ml-1">${displayList.length}</span>`;
 
             let gridHtml = `
                 <div class="font-bold text-gray-800 text-center border-b-2 border-gray-200 pb-2 mb-2 uppercase text-[10px] sm:text-xs">Code</div>
@@ -613,7 +600,7 @@
                 gridHtml += `<div class="col-span-2 text-center py-4 text-gray-500 italic">No records found.</div>`;
             } else {
                 displayList.forEach(item => {
-                    let extraInfo = !dayCode ? `<span class="text-[9px] sm:text-[10px] text-gray-400 ml-1 block sm:inline">(${item.day})</span>` : '';
+                    let extraInfo = `<span class="text-[9px] sm:text-[10px] text-gray-400 ml-1 block sm:inline">(${item.day})</span>`;
                     gridHtml += `
                         <div class="py-2 border-b border-gray-100 text-center font-mono text-blue-600 font-semibold flex items-center justify-center px-1 sm:px-2">${item.code}</div>
                         <div class="py-2 border-b border-gray-100 text-right text-gray-700 font-medium">${item.name} ${extraInfo}</div>
@@ -797,7 +784,6 @@
             const doughnutLabels = categories;
             const doughnutDataVals = categories.map(c => catCountTotal[c]);
 
-            // Clean Flat Design for Bars
             const barDatasets = categories.map((cat, i) => {
                 return {
                     label: cat,
@@ -817,26 +803,12 @@
                     responsive: true, maintainAspectRatio: false,
                     interaction: { mode: 'index', intersect: false }, 
                     plugins: { 
-                        legend: { position: 'top', align: 'end', labels: { boxWidth: 10, usePointStyle: true, pointStyle: 'rect' } },
+                        legend: { position: 'top', align: 'center', labels: { boxWidth: 10, usePointStyle: true, pointStyle: 'rect' } },
                         tooltip: { backgroundColor: '#1f2937', titleFont: { size: 13, weight: 'bold' }, bodyFont: { size: 12 }, padding: 12, cornerRadius: 4 }
                     },
                     scales: { 
                         x: { stacked: true, grid: { display: false }, ticks: { font: { weight: '600' } } }, 
                         y: { stacked: true, beginAtZero: true, ticks: { precision: 0 }, border: { display: false }, grid: { color: '#e5e7eb', drawTicks: false } } 
-                    },
-                    onClick: (e, activeEls) => {
-                        const currentTime = new Date().getTime();
-                        if (currentTime - lastClickTime < 400 && activeEls.length > 0) {
-                            const datasetIndex = activeEls[0].datasetIndex;
-                            const index = activeEls[0].index;
-                            
-                            const catName = barDatasets[datasetIndex].label;
-                            const dayCode = dayCodes[index];
-                            const displayDayStr = dayLabels[index];
-                            
-                            openGraphModalList(catName, dayCode, displayDayStr);
-                        }
-                        lastClickTime = currentTime;
                     }
                 }
             });
@@ -866,7 +838,7 @@
                         if (currentTime - lastClickTime < 400 && activeEls.length > 0) {
                             const index = activeEls[0].index;
                             const catName = doughnutLabels[index];
-                            openGraphModalList(catName, null, null); 
+                            openGraphModalList(catName); 
                         }
                         lastClickTime = currentTime;
                     }
