@@ -45,7 +45,6 @@
             }
         }
 
-        /* Tinatago ang default arrow marker sa details/accordion */
         details > summary { list-style: none; }
         details > summary::-webkit-details-marker { display: none; }
     </style>
@@ -122,11 +121,12 @@
                 <table class="compact-table bg-white text-left">
                     <thead class="bg-gray-100 border-b border-gray-200">
                         <tr>
-                            <th class="font-semibold text-gray-600 w-[12%]">Seq</th>
-                            <th class="font-semibold text-gray-600 w-[18%]">Code</th>
-                            <th class="font-semibold text-gray-600 w-[35%]">Customer</th>
-                            <th class="font-semibold text-gray-600 w-[15%] text-center">Account</th>
-                            <th class="font-semibold text-gray-600 w-[20%]">City</th>
+                            <!-- Inayos ang Header: naka Center Align at Bold na -->
+                            <th class="font-bold text-gray-800 text-center w-[12%]">Seq</th>
+                            <th class="font-bold text-gray-800 text-center w-[18%]">Code</th>
+                            <th class="font-bold text-gray-800 text-center w-[35%]">Customer</th>
+                            <th class="font-bold text-gray-800 text-center w-[15%]">Account</th>
+                            <th class="font-bold text-gray-800 text-center w-[20%]">City</th>
                         </tr>
                     </thead>
                     <tbody id="resultTableBody">
@@ -208,7 +208,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
-            <h3 class="text-lg font-bold text-gray-800 mb-4 border-b border-gray-200 pb-2">Customer Details</h3>
+            <h3 class="text-lg font-bold text-gray-800 mb-4 border-b border-gray-200 pb-2 text-center">Customer Details</h3>
             <div id="modalContent" class="space-y-3 text-sm text-gray-700">
                 <!-- Content injected via JS -->
             </div>
@@ -221,7 +221,6 @@
     <!-- ================= WEEKLY DETAILS ACCORDION MODAL (Pivot Tab) ================= -->
     <div id="weeklyModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-50 hidden flex items-center justify-center p-4 transition-opacity">
         <div class="bg-white rounded-xl shadow-xl max-w-lg w-full relative flex flex-col max-h-[85vh]">
-            <!-- Header (Dynamic Color) -->
             <div id="weeklyModalHeader" class="rounded-t-xl px-4 py-3 sm:px-5 sm:py-4 flex justify-between items-center transition-colors">
                 <h3 id="weeklyModalTitle" class="text-lg font-bold text-white">Week Details</h3>
                 <button id="closeWeeklyModalBtn" class="text-white hover:text-gray-200 focus:outline-none">
@@ -231,12 +230,10 @@
                 </button>
             </div>
             
-            <!-- Body -->
             <div id="weeklyModalContent" class="p-4 sm:p-5 overflow-y-auto space-y-3 bg-gray-50 flex-1">
                 <!-- Accordions injected via JS -->
             </div>
             
-            <!-- Footer -->
             <div class="p-4 border-t border-gray-200 text-center bg-white rounded-b-xl">
                 <button id="closeWeeklyModalBtnBottom" class="bg-gray-100 border border-gray-300 text-gray-700 hover:bg-gray-200 px-6 py-2 rounded-lg text-sm font-semibold transition w-full sm:w-auto">Close</button>
             </div>
@@ -382,13 +379,14 @@
                     codeHTML = `<span class="cursor-pointer text-blue-600 hover:text-blue-800 hover:underline transition" onclick="openCustomerModal('${customerCode}')">${customerCode}</span>`;
                 }
 
+                // Inayos ang alignment sa Lookup Table body cells para tumugma sa Headers
                 resultTableBody.innerHTML += `
                 <tr class="hover:bg-blue-50 transition border-b border-gray-100">
-                    <td class="font-semibold text-gray-800 text-center sm:text-left">${row[selectedDay]}</td>
-                    <td class="font-mono font-medium">${codeHTML}</td>
-                    <td class="text-gray-700 font-medium leading-tight">${row['Customer Name'] || '-'}</td>
+                    <td class="font-semibold text-gray-800 text-center">${row[selectedDay]}</td>
+                    <td class="font-mono font-medium text-center">${codeHTML}</td>
+                    <td class="text-gray-700 font-medium leading-tight text-center">${row['Customer Name'] || '-'}</td>
                     <td class="text-center">${accountDisplay}</td>
-                    <td class="text-gray-500 leading-tight">${row['CITY'] || '-'}</td>
+                    <td class="text-gray-500 leading-tight text-center">${row['CITY'] || '-'}</td>
                 </tr>`;
             });
         }
@@ -414,8 +412,8 @@
                     <span class="font-mono font-bold text-blue-600">${rowData['CustomerCode'] || '-'}</span>
                 </div>
                 <div class="flex flex-col pb-1">
-                    <span class="text-gray-500 font-medium">Customer Name:</span>
-                    <span class="font-semibold text-gray-800">${rowData['Customer Name'] || '-'}</span>
+                    <span class="text-gray-500 font-medium text-center sm:text-left">Customer Name:</span>
+                    <span class="font-semibold text-gray-800 text-center sm:text-left">${rowData['Customer Name'] || '-'}</span>
                 </div>
                 <div class="flex justify-between items-center pb-1">
                     <span class="text-gray-500 font-medium">Account:</span>
@@ -425,7 +423,7 @@
                     <span class="text-gray-500 font-medium">Position Code:</span>
                     <span class="font-semibold text-gray-700">${rowData['PositionCode'] || '-'}</span>
                 </div>
-                <div class="flex flex-col pt-2 border-t border-gray-100 mt-2">
+                <div class="flex flex-col pt-2 border-t border-gray-100 mt-2 text-center">
                     <span class="text-gray-500 font-medium mb-1">Schedule / Frequency:</span>
                     <span class="bg-blue-50 text-blue-800 p-2 rounded-md font-medium text-xs leading-relaxed border border-blue-100">${scheduleText}</span>
                 </div>
@@ -449,14 +447,12 @@
             const w = weeksConfig[weekId];
             const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 
-            // Setup Header color and title
             weeklyModalHeader.className = `rounded-t-xl px-4 py-3 sm:px-5 sm:py-4 flex justify-between items-center transition-colors ${w.titleBg}`;
             weeklyModalTitle.textContent = `Week ${weekId} Details`;
 
             let contentHTML = '';
 
             w.days.forEach((dayCode, index) => {
-                // Kunin ang mga naka-schedule sa araw na ito at i-sort base sa sequence
                 const dayData = globalExcelData.filter(row => isValidCell(row[dayCode])).sort((a,b) => parseFloat(a[dayCode]) - parseFloat(b[dayCode]));
                 const count = dayData.length;
 
@@ -465,13 +461,17 @@
                     gridRows = `<div class="col-span-2 text-center text-gray-500 py-3 italic text-xs sm:text-sm">No schedule available</div>`;
                 } else {
                     dayData.forEach(r => {
+                        // Naka-center din ang items sa loob ng Accordion grid
                         gridRows += `
-                            <div class="py-1.5 border-b border-gray-100 text-gray-700 font-medium truncate pr-2" title="${r['Customer Name'] || '-'}">${r['Customer Name'] || '-'}</div>
-                            <div class="py-1.5 border-b border-gray-100 text-gray-600 truncate" title="${r['Account'] || '-'}">${r['Account'] || '-'}</div>
+                            <div class="py-2 border-b border-gray-100 text-gray-700 font-medium text-center break-words flex items-center justify-center">${r['Customer Name'] || '-'}</div>
+                            <div class="py-2 border-b border-gray-100 text-gray-600 text-center px-2 whitespace-nowrap flex items-center justify-center">${r['Account'] || '-'}</div>
                         `;
                     });
                 }
 
+                // Gumamit ng grid-cols-[1fr_auto] para lumapad nang kusa ang Account column nang hindi nag-o-overlap, 
+                // pero may wrapper na overflow-x-auto para hindi masira ang design sakaling sobrang haba.
+                // Ang Header ay bold at center align.
                 contentHTML += `
                 <details class="bg-white border border-gray-200 rounded-lg shadow-sm group">
                     <summary class="${w.headBg} cursor-pointer px-4 py-3 font-semibold text-gray-800 rounded-lg group-open:rounded-b-none outline-none select-none flex justify-between items-center transition text-sm sm:text-base">
@@ -481,10 +481,10 @@
                         </span>
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transform transition-transform group-open:rotate-180 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
                     </summary>
-                    <div class="p-3 sm:p-4 bg-white rounded-b-lg">
-                        <div class="grid grid-cols-[60%_40%] gap-x-2 text-xs sm:text-sm">
-                            <div class="font-bold text-gray-500 border-b-2 border-gray-200 pb-1.5 mb-1 uppercase tracking-wide text-[10px] sm:text-xs">Customer Name</div>
-                            <div class="font-bold text-gray-500 border-b-2 border-gray-200 pb-1.5 mb-1 uppercase tracking-wide text-[10px] sm:text-xs">Account</div>
+                    <div class="p-3 sm:p-4 bg-white rounded-b-lg overflow-x-auto">
+                        <div class="grid grid-cols-[1fr_auto] gap-x-4 text-xs sm:text-sm min-w-full">
+                            <div class="font-bold text-gray-800 border-b-2 border-gray-200 pb-2 mb-1 uppercase tracking-wide text-[10px] sm:text-xs text-center flex items-center justify-center">Customer Name</div>
+                            <div class="font-bold text-gray-800 border-b-2 border-gray-200 pb-2 mb-1 uppercase tracking-wide text-[10px] sm:text-xs text-center flex items-center justify-center">Account</div>
                             ${gridRows}
                         </div>
                     </div>
