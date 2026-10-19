@@ -42,7 +42,7 @@
 
         <!-- File Upload Section -->
         <div class="bg-white p-3 sm:p-6 rounded-xl shadow-sm border border-gray-200 mb-4 sm:mb-6 w-full">
-            <h2 class="text-sm sm:text-lg font-semibold mb-2 sm:mb-3 text-gray-700">1. Upload Main Data (.xlsx)</h2>
+            <h2 class="text-sm sm:text-lg font-bold mb-2 sm:mb-3 text-gray-700">1. Upload Main Data (.xlsx)</h2>
             <div class="w-full">
                 <input type="file" id="excelFile" accept=".xlsx" class="block w-full text-xs sm:text-sm text-gray-500
                     file:mr-2 sm:file:mr-4 file:py-1.5 sm:file:py-2.5 file:px-3 sm:file:px-4 file:rounded-lg file:border-0 file:font-semibold
@@ -51,20 +51,20 @@
             <p id="uploadStatus" class="mt-1 sm:mt-2 text-[10px] sm:text-sm text-gray-500 italic">Waiting for file...</p>
         </div>
 
-        <!-- Navigation Tabs -->
+        <!-- Navigation Tabs (With Highlight Logic) -->
         <div class="flex space-x-1 sm:space-x-2 border-b border-gray-300 mb-4 sm:mb-6 w-full overflow-x-auto hide-scroll">
-            <button class="py-2 px-3 sm:px-5 text-blue-600 border-b-2 border-blue-600 font-semibold transition text-xs sm:text-sm whitespace-nowrap" id="tab-lookup">Lookup Route</button>
-            <button class="py-2 px-3 sm:px-5 text-gray-500 border-b-2 border-transparent hover:text-blue-600 font-semibold transition text-xs sm:text-sm whitespace-nowrap" id="tab-pivot">Dynamic Pivot</button>
-            <button class="py-2 px-3 sm:px-5 text-gray-500 border-b-2 border-transparent hover:text-blue-600 font-semibold transition text-xs sm:text-sm whitespace-nowrap" id="tab-graphs">Graphs</button>
+            <button class="py-2 px-3 sm:px-5 text-blue-700 border-b-2 border-blue-700 bg-blue-50 font-bold rounded-t-md transition text-xs sm:text-sm whitespace-nowrap" id="tab-lookup">Lookup Route</button>
+            <button class="py-2 px-3 sm:px-5 text-gray-500 border-b-2 border-transparent font-semibold hover:text-blue-600 transition text-xs sm:text-sm whitespace-nowrap" id="tab-pivot">Dynamic Pivot</button>
+            <button class="py-2 px-3 sm:px-5 text-gray-500 border-b-2 border-transparent font-semibold hover:text-blue-600 transition text-xs sm:text-sm whitespace-nowrap" id="tab-graphs">Graphs</button>
         </div>
 
         <!-- ================= LOOKUP ROUTE SECTION ================= -->
         <div id="section-lookup" class="bg-white p-2 sm:p-6 rounded-xl shadow-sm border border-gray-200 w-full">
-            <h2 class="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-gray-700">2. Lookup Route</h2>
+            <h2 class="text-base sm:text-lg font-bold mb-3 sm:mb-4 text-gray-700">2. Lookup Route</h2>
             
             <div class="flex flex-col sm:flex-row items-stretch sm:items-end gap-2 sm:gap-3 mb-4 sm:mb-6 w-full">
                 <div class="w-full sm:w-64">
-                    <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Select Day/Week</label>
+                    <label class="block text-xs sm:text-sm font-bold text-gray-700 mb-1">Select Day/Week</label>
                     <select id="daySelector" class="border border-gray-300 rounded-lg p-2 sm:p-2.5 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 text-xs sm:text-sm outline-none cursor-pointer" disabled>
                         <option value="">-- Select --</option>
                         <option value="Mon1">Monday 1 (Mon1)</option>
@@ -74,7 +74,6 @@
                         <option value="Fri1">Friday 1 (Fri1)</option>
                         <option value="Sat1">Saturday 1 (Sat1)</option>
                         <option value="Sun1">Sunday 1 (Sun1)</option>
-                        
                         <option value="Mon2">Monday 2 (Mon2)</option>
                         <option value="Tue2">Tuesday 2 (Tue2)</option>
                         <option value="Wed2">Wednesday 2 (Wed2)</option>
@@ -82,7 +81,6 @@
                         <option value="Fri2">Friday 2 (Fri2)</option>
                         <option value="Sat2">Saturday 2 (Sat2)</option>
                         <option value="Sun2">Sunday 2 (Sun2)</option>
-                        
                         <option value="Mon3">Monday 3 (Mon3)</option>
                         <option value="Tue3">Tuesday 3 (Tue3)</option>
                         <option value="Wed3">Wednesday 3 (Wed3)</option>
@@ -90,7 +88,6 @@
                         <option value="Fri3">Friday 3 (Fri3)</option>
                         <option value="Sat3">Saturday 3 (Sat3)</option>
                         <option value="Sun3">Sunday 3 (Sun3)</option>
-                        
                         <option value="Mon4">Monday 4 (Mon4)</option>
                         <option value="Tue4">Tuesday 4 (Tue4)</option>
                         <option value="Wed4">Wednesday 4 (Wed4)</option>
@@ -102,7 +99,7 @@
                 </div>
             </div>
             
-            <p id="totalCount" class="mb-3 font-semibold text-gray-700 text-xs sm:text-sm bg-blue-50 inline-block px-2 py-1 rounded border border-blue-100 hidden"></p>
+            <p id="totalCount" class="mb-3 font-bold text-gray-700 text-xs sm:text-sm bg-blue-50 inline-block px-2 py-1 rounded border border-blue-100 hidden"></p>
             
             <div class="w-full border border-gray-200 rounded-md overflow-hidden">
                 <table class="compact-table bg-white text-left">
@@ -125,27 +122,25 @@
         <!-- ================= DYNAMIC PIVOT SECTION ================= -->
         <div id="section-pivot" class="bg-transparent w-full hidden">
             <div class="mb-4 sm:mb-6 flex justify-between items-center bg-white p-3 sm:p-4 rounded-xl border border-gray-200 shadow-sm">
-                <h2 class="text-sm sm:text-lg font-semibold text-gray-700">Dynamic Pivot Dashboard</h2>
+                <h2 class="text-sm sm:text-lg font-bold text-gray-700">Dynamic Pivot Dashboard</h2>
                 <span class="bg-yellow-300 font-bold border border-yellow-400 rounded px-2 sm:px-4 py-1 text-xs sm:text-base shadow-sm">
                     Total: <span id="pivot-total-accounts">0</span>
                 </span>
             </div>
 
             <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6 w-full">
-                <!-- Left Column -->
                 <div class="w-full">
                     <div id="pivot-weekly-tables" class="w-full flex flex-col gap-3 sm:gap-5"></div>
                 </div>
 
-                <!-- Right Column -->
                 <div class="w-full flex flex-col gap-4 sm:gap-6">
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden w-full">
                         <table class="compact-table text-center w-full">
                             <thead>
                                 <tr><th colspan="6" class="bg-blue-500 text-white font-bold py-1.5 sm:py-2">Count of Frequency</th></tr>
                                 <tr class="bg-blue-100 text-gray-700 border-b border-gray-300">
-                                    <th class="text-left w-[30%]">Account</th>
-                                    <th class="w-[12%]">1</th><th class="w-[12%]">2</th><th class="w-[12%]">3</th><th class="w-[12%]">4</th><th class="w-[22%] font-bold">Total</th>
+                                    <th class="text-left font-bold w-[30%]">Account</th>
+                                    <th class="font-bold w-[12%]">1</th><th class="font-bold w-[12%]">2</th><th class="font-bold w-[12%]">3</th><th class="font-bold w-[12%]">4</th><th class="font-bold w-[22%]">Total</th>
                                 </tr>
                             </thead>
                             <tbody id="pivot-freq-body">
@@ -159,8 +154,8 @@
                             <thead>
                                 <tr><th colspan="6" class="bg-gray-600 text-white font-bold py-1.5 sm:py-2">Weekly visit count per Account</th></tr>
                                 <tr class="bg-gray-100 text-gray-700 border-b border-gray-300">
-                                    <th class="text-left w-[30%]">Account</th>
-                                    <th class="w-[12%]">1</th><th class="w-[12%]">2</th><th class="w-[12%]">3</th><th class="w-[12%]">4</th><th class="w-[22%] font-bold">Total</th>
+                                    <th class="text-left font-bold w-[30%]">Account</th>
+                                    <th class="font-bold w-[12%]">1</th><th class="font-bold w-[12%]">2</th><th class="font-bold w-[12%]">3</th><th class="font-bold w-[12%]">4</th><th class="font-bold w-[22%]">Total</th>
                                 </tr>
                             </thead>
                             <tbody id="pivot-visit-body">
@@ -174,11 +169,11 @@
 
         <!-- ================= GRAPHS SECTION ================= -->
         <div id="section-graphs" class="bg-white p-3 sm:p-6 rounded-xl shadow-sm border border-gray-200 w-full hidden">
-            <h2 class="text-base sm:text-lg font-semibold mb-4 text-gray-700">3. Visual Analytics</h2>
+            <h2 class="text-base sm:text-lg font-bold mb-4 text-gray-700">3. Visual Analytics</h2>
             
             <div class="flex flex-col sm:flex-row gap-3 mb-6 bg-gray-50 p-3 sm:p-4 rounded-lg border border-gray-200">
                 <div class="w-full sm:w-1/2">
-                    <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Select Week</label>
+                    <label class="block text-xs sm:text-sm font-bold text-gray-700 mb-1">Select Week</label>
                     <select id="graphWeekSelector" class="border border-gray-300 rounded-lg p-2 sm:p-2.5 w-full focus:ring-2 focus:ring-blue-500 outline-none text-sm cursor-pointer" disabled>
                         <option value="1">Week 1</option>
                         <option value="2">Week 2</option>
@@ -187,7 +182,7 @@
                     </select>
                 </div>
                 <div class="w-full sm:w-1/2">
-                    <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">View By</label>
+                    <label class="block text-xs sm:text-sm font-bold text-gray-700 mb-1">View By</label>
                     <select id="graphCategorySelector" class="border border-gray-300 rounded-lg p-2 sm:p-2.5 w-full focus:ring-2 focus:ring-blue-500 outline-none text-sm cursor-pointer" disabled>
                         <option value="Account">Account</option>
                         <option value="CITY">City</option>
@@ -195,22 +190,20 @@
                     </select>
                 </div>
             </div>
-            
-            <p class="text-[10px] sm:text-xs text-gray-400 italic mb-4 text-center sm:text-left">Double-click on the doughnut chart segment to view the detailed customer list.</p>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
                 <!-- Bar Chart -->
-                <div class="border border-gray-200 rounded-xl p-4 shadow-sm relative w-full flex flex-col transition hover:shadow-md bg-white">
+                <div class="border border-gray-200 rounded-xl p-4 shadow-sm relative w-full flex flex-col bg-white">
                     <h3 class="text-center text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Daily Breakdown</h3>
                     <div class="relative flex-1 min-h-[200px] sm:min-h-[250px]"><canvas id="barChart"></canvas></div>
-                    <!-- Bar Chart Analysis Text (English) -->
                     <div id="barChartAnalysis" class="mt-4 p-3 bg-blue-50 text-blue-800 text-[10px] sm:text-xs rounded-lg border border-blue-100 leading-relaxed hidden"></div>
                 </div>
-                <!-- Doughnut Chart -->
-                <div class="border border-gray-200 rounded-xl p-4 shadow-sm relative w-full flex flex-col transition hover:shadow-md bg-white">
+                <!-- Doughnut Chart (With internal tip) -->
+                <div class="border border-gray-200 rounded-xl p-4 shadow-sm relative w-full flex flex-col bg-white">
                     <h3 class="text-center text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Total Weekly Distribution</h3>
+                    <hr class="border-gray-200 mb-2">
+                    <p class="text-[10px] sm:text-xs text-gray-400 italic text-center mb-3">Double-click on the doughnut chart segment to view the detailed customer list.</p>
                     <div class="relative flex-1 min-h-[200px] sm:min-h-[250px]"><canvas id="doughnutChart"></canvas></div>
-                    <!-- Doughnut Chart Analysis Text (English) -->
                     <div id="doughnutChartAnalysis" class="mt-4 p-3 bg-emerald-50 text-emerald-800 text-[10px] sm:text-xs rounded-lg border border-emerald-100 leading-relaxed hidden"></div>
                 </div>
             </div>
@@ -271,7 +264,7 @@
     </div>
 
     <script>
-        // Setup Chart.js global defaults for modern flat look
+        // Setup Chart.js global defaults
         Chart.defaults.font.family = "'Inter', 'Segoe UI', 'Helvetica Neue', 'Arial', sans-serif";
         Chart.defaults.color = '#6b7280';
         
@@ -325,25 +318,31 @@
             'Mon4', 'Tue4', 'Wed4', 'Thu4', 'Fri4', 'Sat4', 'Sun4'
         ];
 
-        // Modern flat solid colors
         const chartColors = ['#2563eb', '#dc2626', '#059669', '#d97706', '#7c3aed', '#0891b2', '#db2777', '#4f46e5', '#0d9488', '#e11d48'];
+
+        // TAB HIGHLIGHTING LOGIC
+        const activeTabClasses = ['border-blue-700', 'text-blue-700', 'bg-blue-50', 'font-bold', 'rounded-t-md'];
+        const inactiveTabClasses = ['text-gray-500', 'border-transparent', 'font-semibold', 'hover:text-blue-600'];
 
         function switchTab(activeTabStr) {
             [tabLookup, tabPivot, tabGraphs].forEach(t => {
-                t.classList.remove('border-blue-600', 'text-blue-600');
-                t.classList.add('text-gray-500', 'border-transparent');
+                t.classList.remove(...activeTabClasses);
+                t.classList.add(...inactiveTabClasses);
             });
             [secLookup, secPivot, secGraphs].forEach(s => s.classList.add('hidden'));
 
             if (activeTabStr === 'lookup') {
-                tabLookup.classList.add('border-blue-600', 'text-blue-600');
+                tabLookup.classList.remove(...inactiveTabClasses);
+                tabLookup.classList.add(...activeTabClasses);
                 secLookup.classList.remove('hidden');
             } else if (activeTabStr === 'pivot') {
-                tabPivot.classList.add('border-blue-600', 'text-blue-600');
+                tabPivot.classList.remove(...inactiveTabClasses);
+                tabPivot.classList.add(...activeTabClasses);
                 secPivot.classList.remove('hidden');
                 if(globalExcelData.length > 0) generateDynamicPivot(globalExcelData);
             } else if (activeTabStr === 'graphs') {
-                tabGraphs.classList.add('border-blue-600', 'text-blue-600');
+                tabGraphs.classList.remove(...inactiveTabClasses);
+                tabGraphs.classList.add(...activeTabClasses);
                 secGraphs.classList.remove('hidden');
                 if(globalExcelData.length > 0) renderGraphs();
             }
@@ -365,6 +364,7 @@
             return `<span class="font-medium">${accountName}</span>`;
         };
 
+        // EXCEL UPLOAD AND FALLBACK LOGIC
         fileInput.addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (!file) return;
@@ -379,12 +379,23 @@
                 
                 if(!workbook.SheetNames.includes(sheetName)) {
                     uploadStatus.innerHTML = `Error: Sheet not found. <br><span class="text-red-700">Make sure the exact tab name is <b>"IC003CAB OCTOBER - FINAL"</b> to enable the lookup.</span>`;
-                    uploadStatus.className = "mt-1 sm:mt-2 text-red-600 font-semibold text-[10px] sm:text-sm";
+                    uploadStatus.className = "mt-1 sm:mt-2 text-red-600 font-bold text-[10px] sm:text-sm";
                     daySelector.disabled = true; graphWeekSelector.disabled = true; graphCategorySelector.disabled = true;
                     return;
                 }
                 
-                globalExcelData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+                let parsedData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+                
+                // Fallback for corrupted/invalid data structure
+                if (parsedData.length === 0 || (!parsedData[0].hasOwnProperty('Customer Name') && !parsedData[0].hasOwnProperty('Account'))) {
+                    uploadStatus.innerHTML = `Error: Nahanap ang sheet ngunit hindi tama ang format ng data. <br><span class="text-red-700">Pakisiguro na kumpleto ang mga columns tulad ng <b>Customer Name</b>, <b>Account</b>, at mga araw (hal. <b>Mon1</b>).</span>`;
+                    uploadStatus.className = "mt-1 sm:mt-2 text-red-600 font-bold text-[10px] sm:text-sm";
+                    daySelector.disabled = true; graphWeekSelector.disabled = true; graphCategorySelector.disabled = true;
+                    globalExcelData = [];
+                    return;
+                }
+
+                globalExcelData = parsedData;
                 uploadStatus.innerHTML = `Success! Data loaded.`;
                 uploadStatus.className = "mt-1 sm:mt-2 text-green-600 font-semibold text-[10px] sm:text-sm";
 
@@ -431,15 +442,24 @@
                 resultTableBody.innerHTML += `
                 <tr class="hover:bg-blue-50 transition border-b border-gray-100">
                     <td class="font-semibold text-gray-800 text-center">${row[selectedDay]}</td>
-                    <td class="font-mono font-medium text-center">${codeHTML}</td>
-                    <td class="text-gray-700 font-medium leading-tight text-left sm:text-center">${row['Customer Name'] || '-'}</td>
+                    <td class="font-mono font-bold text-center">${codeHTML}</td>
+                    <td class="text-gray-700 font-medium leading-tight text-center sm:text-left">${row['Customer Name'] || '-'}</td>
                     <td class="text-center">${accountDisplay}</td>
                     <td class="text-gray-500 leading-tight text-center">${row['CITY'] || '-'}</td>
                 </tr>`;
             });
         }
 
-        // ================= MODALS =================
+        // ================= BACKGROUND SCROLL CHECK =================
+        const checkBodyScroll = () => {
+            if (customerModal.classList.contains('hidden') && 
+                weeklyModal.classList.contains('hidden') && 
+                graphModal.classList.contains('hidden')) {
+                document.body.classList.remove('overflow-hidden');
+            }
+        };
+
+        // ================= CUSTOMER MODAL LOGIC =================
         window.openCustomerModal = function(code) {
             const rowData = globalExcelData.find(r => String(r['CustomerCode']) === String(code));
             if(!rowData) return;
@@ -451,36 +471,28 @@
 
             modalContent.innerHTML = `
                 <div class="flex justify-between items-center pb-1">
-                    <span class="text-gray-500 font-medium">Customer Code:</span>
+                    <span class="text-gray-500 font-bold">Customer Code:</span>
                     <span class="font-mono font-bold text-blue-600">${rowData['CustomerCode'] || '-'}</span>
                 </div>
                 <div class="flex flex-col pb-1">
-                    <span class="text-gray-500 font-medium text-center sm:text-left">Customer Name:</span>
+                    <span class="text-gray-500 font-bold text-center sm:text-left">Customer Name:</span>
                     <span class="font-semibold text-gray-800 text-center sm:text-left">${rowData['Customer Name'] || '-'}</span>
                 </div>
                 <div class="flex justify-between items-center pb-1">
-                    <span class="text-gray-500 font-medium">Account:</span>
+                    <span class="text-gray-500 font-bold">Account:</span>
                     <span class="font-semibold text-gray-700">${rowData['Account'] || '-'}</span>
                 </div>
                 <div class="flex justify-between items-center pb-1">
-                    <span class="text-gray-500 font-medium">Position Code:</span>
+                    <span class="text-gray-500 font-bold">Position Code:</span>
                     <span class="font-semibold text-gray-700">${rowData['PositionCode'] || '-'}</span>
                 </div>
                 <div class="flex flex-col pt-2 border-t border-gray-100 mt-2 text-center">
-                    <span class="text-gray-500 font-medium mb-1">Schedule / Frequency:</span>
-                    <span class="bg-blue-50 text-blue-800 p-2 rounded-md font-medium text-xs leading-relaxed border border-blue-100">${scheduleList.length > 0 ? scheduleList.join(', ') : 'None'}</span>
+                    <span class="text-gray-500 font-bold mb-1">Schedule / Frequency:</span>
+                    <span class="bg-blue-50 text-blue-800 p-2 rounded-md font-bold text-xs leading-relaxed border border-blue-100">${scheduleList.length > 0 ? scheduleList.join(', ') : 'None'}</span>
                 </div>
             `;
             customerModal.classList.remove('hidden');
             document.body.classList.add('overflow-hidden');
-        };
-
-        const checkBodyScroll = () => {
-            if (customerModal.classList.contains('hidden') && 
-                weeklyModal.classList.contains('hidden') && 
-                graphModal.classList.contains('hidden')) {
-                document.body.classList.remove('overflow-hidden');
-            }
         };
 
         const hideModal = () => { customerModal.classList.add('hidden'); checkBodyScroll(); };
@@ -522,9 +534,9 @@
                 contentHTML += `
                 <details class="bg-white border border-gray-200 rounded-lg shadow-sm group weekly-accordion">
                     <summary class="${w.headBg} cursor-pointer px-4 py-3 font-semibold text-gray-800 rounded-lg group-open:rounded-b-none outline-none select-none flex justify-between items-center transition text-sm sm:text-base">
-                        <span class="flex items-center">
+                        <span class="flex items-center font-bold">
                             ${dayNames[index]} 
-                            <span class="bg-white px-2 py-0.5 rounded-full text-xs ml-3 shadow-sm border border-gray-200">${count} accounts</span>
+                            <span class="bg-white px-2 py-0.5 rounded-full text-xs ml-3 shadow-sm border border-gray-200 font-bold">${count} accounts</span>
                         </span>
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transform transition-transform group-open:rotate-180 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
                     </summary>
@@ -560,13 +572,13 @@
         closeWeeklyModalBtnBottom.addEventListener('click', hideWeeklyModal);
         weeklyModal.addEventListener('click', (e) => { if (e.target === weeklyModal) hideWeeklyModal(); });
 
-        // ================= GRAPH MODAL LIST LOGIC =================
+        // ================= GRAPH MODAL LIST LOGIC (Doughnut Only) =================
         window.openGraphModalList = function(categoryName) {
             const categoryCol = graphCategorySelector.value;
             const weekId = graphWeekSelector.value;
             let displayList = []; 
 
-            // Doughnut Chart Click: Whole Week (List all visits, so it matches the chart total exactly)
+            // Doughnut Chart Click: Whole Week (List all visits, matching the chart total exactly)
             const daysConfig = [
                 { code: `Mon${weekId}`, name: 'Monday' },
                 { code: `Tue${weekId}`, name: 'Tuesday' },
@@ -589,7 +601,8 @@
                 }
             });
             
-            graphModalTitle.innerHTML = `WEEK ${weekId} TOTAL - <span class="text-blue-600">${categoryName}</span> - <span class="bg-gray-200 text-gray-700 px-2 py-0.5 rounded ml-1">${displayList.length}</span>`;
+            // Set dynamic title
+            graphModalTitle.innerHTML = `WEEK ${weekId} Total - <span class="text-blue-600">${categoryName}</span> - <span class="bg-gray-200 text-gray-800 px-2 py-0.5 rounded ml-1">${displayList.length}</span>`;
 
             let gridHtml = `
                 <div class="font-bold text-gray-800 text-center border-b-2 border-gray-200 pb-2 mb-2 uppercase text-[10px] sm:text-xs">Code</div>
@@ -602,8 +615,8 @@
                 displayList.forEach(item => {
                     let extraInfo = `<span class="text-[9px] sm:text-[10px] text-gray-400 ml-1 block sm:inline">(${item.day})</span>`;
                     gridHtml += `
-                        <div class="py-2 border-b border-gray-100 text-center font-mono text-blue-600 font-semibold flex items-center justify-center px-1 sm:px-2">${item.code}</div>
-                        <div class="py-2 border-b border-gray-100 text-right text-gray-700 font-medium">${item.name} ${extraInfo}</div>
+                        <div class="py-2 border-b border-gray-100 text-center font-mono text-blue-600 font-bold flex items-center justify-center px-1 sm:px-2">${item.code}</div>
+                        <div class="py-2 border-b border-gray-100 text-right text-gray-700 font-bold">${item.name} ${extraInfo}</div>
                     `;
                 });
             }
@@ -647,8 +660,8 @@
                                 </th>
                             </tr>
                             <tr class="${w.headBg} text-gray-700 border-b border-gray-300">
-                                <th class="w-[20%] text-left pl-2">Position</th>
-                                <th class="w-[13%]">Mon</th><th class="w-[13%]">Tue</th><th class="w-[13%]">Wed</th><th class="w-[13%]">Thu</th><th class="w-[13%]">Fri</th>
+                                <th class="w-[20%] text-left font-bold pl-2">Position</th>
+                                <th class="w-[13%] font-bold">Mon</th><th class="w-[13%] font-bold">Tue</th><th class="w-[13%] font-bold">Wed</th><th class="w-[13%] font-bold">Thu</th><th class="w-[13%] font-bold">Fri</th>
                                 <th class="w-[15%] font-bold">Avg</th>
                             </tr>
                         </thead>
@@ -662,8 +675,8 @@
 
                     weeklyHTML += `
                         <tr class="border-b border-gray-100 last:border-0 hover:bg-gray-50">
-                            <td class="font-semibold text-gray-700 text-left pl-2">${pc}</td>
-                            ${counts.map((c) => `<td class="text-gray-600">${c > 0 ? c : '-'}</td>`).join('')}
+                            <td class="font-bold text-gray-700 text-left pl-2">${pc}</td>
+                            ${counts.map((c) => `<td class="text-gray-600 font-semibold">${c > 0 ? c : '-'}</td>`).join('')}
                             <td class="font-bold text-gray-800 bg-gray-50">${avg}</td>
                         </tr>`;
                 });
@@ -696,8 +709,8 @@
                 let d = freqData[acc];
                 freqGrandTotal[1] += d[1]; freqGrandTotal[2] += d[2]; freqGrandTotal[3] += d[3]; freqGrandTotal[4] += d[4]; freqGrandTotal.total += d.total;
                 freqHTML += `<tr class="border-b border-gray-100 hover:bg-gray-50">
-                             <td class="text-left font-semibold text-gray-700 pl-2">${acc}</td>
-                             <td class="text-gray-600">${d[1] || '-'}</td><td class="text-gray-600">${d[2] || '-'}</td><td class="text-gray-600">${d[3] || '-'}</td><td class="text-gray-600">${d[4] || '-'}</td>
+                             <td class="text-left font-bold text-gray-700 pl-2">${acc}</td>
+                             <td class="text-gray-600 font-semibold">${d[1] || '-'}</td><td class="text-gray-600 font-semibold">${d[2] || '-'}</td><td class="text-gray-600 font-semibold">${d[3] || '-'}</td><td class="text-gray-600 font-semibold">${d[4] || '-'}</td>
                              <td class="font-bold bg-blue-50 text-blue-800">${d.total || '0'}</td></tr>`;
             });
             freqHTML += `<tr class="bg-blue-100 font-bold"><td class="text-left text-blue-900 pl-2">Total</td><td>${freqGrandTotal[1]}</td><td>${freqGrandTotal[2]}</td><td>${freqGrandTotal[3]}</td><td>${freqGrandTotal[4]}</td><td>${freqGrandTotal.total}</td></tr>`;
@@ -708,8 +721,8 @@
                 let d = visitData[acc];
                 visitGrandTotal[1] += d[1]; visitGrandTotal[2] += d[2]; visitGrandTotal[3] += d[3]; visitGrandTotal[4] += d[4]; visitGrandTotal.total += d.total;
                 visitHTML += `<tr class="border-b border-gray-100 hover:bg-gray-50">
-                             <td class="text-left font-semibold text-gray-700 pl-2">${acc}</td>
-                             <td class="text-gray-600">${d[1] || '-'}</td><td class="text-gray-600">${d[2] || '-'}</td><td class="text-gray-600">${d[3] || '-'}</td><td class="text-gray-600">${d[4] || '-'}</td>
+                             <td class="text-left font-bold text-gray-700 pl-2">${acc}</td>
+                             <td class="text-gray-600 font-semibold">${d[1] || '-'}</td><td class="text-gray-600 font-semibold">${d[2] || '-'}</td><td class="text-gray-600 font-semibold">${d[3] || '-'}</td><td class="text-gray-600 font-semibold">${d[4] || '-'}</td>
                              <td class="font-bold bg-gray-100 text-gray-800">${d.total || '0'}</td></tr>`;
             });
             visitHTML += `<tr class="bg-gray-200 font-bold"><td class="text-left text-gray-900 pl-2">Overall</td><td>${visitGrandTotal[1]}</td><td>${visitGrandTotal[2]}</td><td>${visitGrandTotal[3]}</td><td>${visitGrandTotal[4]}</td><td>${visitGrandTotal.total}</td></tr>`;
@@ -794,6 +807,7 @@
                 };
             });
 
+            // Re-render Bar Chart (Removed double click modal logic)
             if (myBarChart) myBarChart.destroy();
             const ctxBar = document.getElementById('barChart').getContext('2d');
             myBarChart = new Chart(ctxBar, {
@@ -803,16 +817,17 @@
                     responsive: true, maintainAspectRatio: false,
                     interaction: { mode: 'index', intersect: false }, 
                     plugins: { 
-                        legend: { position: 'top', align: 'center', labels: { boxWidth: 10, usePointStyle: true, pointStyle: 'rect' } },
+                        legend: { position: 'top', align: 'center', labels: { boxWidth: 10, usePointStyle: true, pointStyle: 'rect', font: {weight: 'bold'} } },
                         tooltip: { backgroundColor: '#1f2937', titleFont: { size: 13, weight: 'bold' }, bodyFont: { size: 12 }, padding: 12, cornerRadius: 4 }
                     },
                     scales: { 
-                        x: { stacked: true, grid: { display: false }, ticks: { font: { weight: '600' } } }, 
-                        y: { stacked: true, beginAtZero: true, ticks: { precision: 0 }, border: { display: false }, grid: { color: '#e5e7eb', drawTicks: false } } 
+                        x: { stacked: true, grid: { display: false }, ticks: { font: { weight: 'bold' } } }, 
+                        y: { stacked: true, beginAtZero: true, ticks: { precision: 0, font: { weight: 'bold' } }, border: { display: false }, grid: { color: '#e5e7eb', drawTicks: false } } 
                     }
                 }
             });
 
+            // Re-render Doughnut Chart
             if (myDoughnutChart) myDoughnutChart.destroy();
             const ctxDoughnut = document.getElementById('doughnutChart').getContext('2d');
             myDoughnutChart = new Chart(ctxDoughnut, {
@@ -830,7 +845,7 @@
                     responsive: true, maintainAspectRatio: false,
                     cutout: '60%',
                     plugins: { 
-                        legend: { position: 'right', labels: { boxWidth: 10, usePointStyle: true, pointStyle: 'circle' } },
+                        legend: { position: 'right', labels: { boxWidth: 10, usePointStyle: true, pointStyle: 'circle', font: {weight: 'bold'} } },
                         tooltip: { backgroundColor: '#1f2937', titleFont: { size: 13, weight: 'bold' }, bodyFont: { size: 12 }, padding: 12, cornerRadius: 4 }
                     },
                     onClick: (e, activeEls) => {
