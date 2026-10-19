@@ -15,14 +15,21 @@
         body, html { overflow-x: hidden; }
         
         .compact-table { width: 100%; table-layout: fixed; }
-        .compact-table th, .compact-table td {
+        .auto-table { width: 100%; table-layout: auto; }
+
+        /* Pinaliit at siniksik ang padding at font-size para sa lahat ng tables */
+        .compact-table th, .compact-table td,
+        .auto-table th, .auto-table td {
             word-wrap: break-word; overflow-wrap: break-word;
             padding: 0.35rem 0.25rem; font-size: 0.65rem; vertical-align: middle;
         }
 
         @media (min-width: 640px) {
             .compact-table { table-layout: auto; }
-            .compact-table th, .compact-table td { padding: 0.75rem 1rem; font-size: 0.875rem; }
+            .compact-table th, .compact-table td,
+            .auto-table th, .auto-table td { 
+                padding: 0.4rem 0.5rem; font-size: 0.75rem; /* Equivalent to text-xs */
+            }
         }
         
         .account-logo { max-height: 1.25rem; width: auto; max-width: 100%; object-fit: contain; display: inline-block; }
@@ -67,15 +74,12 @@
                     <label class="block text-xs sm:text-sm font-bold text-gray-700 mb-1">Select Day/Week</label>
                     <select id="daySelector" class="border border-gray-300 rounded-lg p-2 sm:p-2.5 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 text-xs sm:text-sm outline-none cursor-pointer" disabled>
                         <option value="">-- Select --</option>
-                        <!-- Options are now dynamically generated via JS -->
                     </select>
                 </div>
             </div>
             
             <!-- CENTERED 3-PART TOTAL COUNT UI -->
-            <div id="totalCount" class="mb-5 w-full flex justify-center hidden">
-                <!-- Injected via JS -->
-            </div>
+            <div id="totalCount" class="mb-5 w-full flex justify-center hidden"></div>
             
             <div class="w-full border border-gray-200 rounded-md overflow-hidden">
                 <table class="compact-table bg-white text-left">
@@ -113,8 +117,8 @@
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden w-full">
                         <table class="auto-table text-center w-full">
                             <thead>
-                                <tr><th colspan="6" class="bg-blue-500 text-white font-bold py-1.5 sm:py-2 text-center">Count of Frequency</th></tr>
-                                <tr class="bg-blue-100 text-gray-700 border-b border-gray-300">
+                                <tr><th colspan="6" class="bg-blue-500 text-white font-bold py-1.5 sm:py-2 text-center text-xs sm:text-sm">Count of Frequency</th></tr>
+                                <tr class="bg-blue-100 text-gray-700 border-b border-gray-300 text-[10px] sm:text-xs">
                                     <th class="text-center font-bold px-2 w-auto">Account</th>
                                     <th class="font-bold w-[12%] sm:w-[10%] text-center">1</th>
                                     <th class="font-bold w-[12%] sm:w-[10%] text-center">2</th>
@@ -132,8 +136,8 @@
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden w-full">
                         <table class="auto-table text-center w-full">
                             <thead>
-                                <tr><th colspan="6" class="bg-gray-600 text-white font-bold py-1.5 sm:py-2 text-center">Weekly visit count per Account</th></tr>
-                                <tr class="bg-gray-100 text-gray-700 border-b border-gray-300">
+                                <tr><th colspan="6" class="bg-gray-600 text-white font-bold py-1.5 sm:py-2 text-center text-xs sm:text-sm">Weekly visit count per Account</th></tr>
+                                <tr class="bg-gray-100 text-gray-700 border-b border-gray-300 text-[10px] sm:text-xs">
                                     <th class="text-center font-bold px-2 w-auto">Account</th>
                                     <th class="font-bold w-[12%] sm:w-[10%] text-center">1</th>
                                     <th class="font-bold w-[12%] sm:w-[10%] text-center">2</th>
@@ -182,7 +186,7 @@
                     <div class="relative flex-1 min-h-[200px] sm:min-h-[250px]"><canvas id="barChart"></canvas></div>
                     <div id="barChartAnalysis" class="mt-4 p-3 bg-blue-50 text-blue-800 text-[10px] sm:text-xs rounded-lg border border-blue-100 leading-relaxed hidden"></div>
                 </div>
-                <!-- Doughnut Chart (With internal tip) -->
+                <!-- Doughnut Chart -->
                 <div class="border border-gray-200 rounded-xl p-4 shadow-sm relative w-full flex flex-col transition hover:shadow-md bg-white">
                     <h3 class="text-center text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Total Weekly Distribution</h3>
                     <hr class="border-gray-200 mb-2">
@@ -307,7 +311,6 @@
         ];
 
         const dayNamesMap = { 'Mon': 'Monday', 'Tue': 'Tuesday', 'Wed': 'Wednesday', 'Thu': 'Thursday', 'Fri': 'Friday', 'Sat': 'Saturday', 'Sun': 'Sunday' };
-
         const chartColors = ['#2563eb', '#dc2626', '#059669', '#d97706', '#7c3aed', '#0891b2', '#db2777', '#4f46e5', '#0d9488', '#e11d48'];
 
         // TAB HIGHLIGHTING LOGIC
@@ -483,7 +486,7 @@
             }
         };
 
-        // ================= CUSTOMER MODAL LOGIC (UPDATED LEFT ALIGNED NO GRID) =================
+        // ================= CUSTOMER MODAL LOGIC (UPDATED ALIGNMENT) =================
         window.openCustomerModal = function(code) {
             const rowData = globalExcelData.find(r => String(r['CustomerCode']) === String(code));
             if(!rowData) return;
@@ -494,26 +497,26 @@
             });
 
             modalContent.innerHTML = `
-                <div class="flex flex-col space-y-2 text-left px-2 sm:px-4 text-sm sm:text-base">
-                    <div>
-                        <span class="text-gray-500 font-bold">Customer Name:</span>
-                        <span class="font-semibold text-gray-800 ml-1 break-words">${rowData['Customer Name'] || '-'}</span>
+                <div class="flex flex-col space-y-3 text-left px-2 sm:px-4 text-sm sm:text-base border-b border-gray-100 pb-4">
+                    <div class="flex flex-col">
+                        <span class="text-gray-500 font-bold text-xs uppercase tracking-wide">Customer Name</span>
+                        <span class="font-semibold text-gray-800 break-words mt-0.5">${rowData['Customer Name'] || '-'}</span>
                     </div>
-                    <div>
-                        <span class="text-gray-500 font-bold">Account:</span>
-                        <span class="font-semibold text-gray-700 ml-1">${rowData['Account'] || '-'}</span>
+                    <div class="flex flex-col">
+                        <span class="text-gray-500 font-bold text-xs uppercase tracking-wide">Account</span>
+                        <span class="font-semibold text-gray-700 mt-0.5">${rowData['Account'] || '-'}</span>
                     </div>
-                    <div>
-                        <span class="text-gray-500 font-bold">Code:</span>
-                        <span class="font-mono font-bold text-blue-600 ml-1">${rowData['CustomerCode'] || '-'}</span>
+                    <div class="flex flex-col">
+                        <span class="text-gray-500 font-bold text-xs uppercase tracking-wide">Code</span>
+                        <span class="font-mono font-bold text-blue-600 mt-0.5">${rowData['CustomerCode'] || '-'}</span>
                     </div>
-                    <div>
-                        <span class="text-gray-500 font-bold">Position Code:</span>
-                        <span class="font-semibold text-gray-700 ml-1">${rowData['PositionCode'] || '-'}</span>
+                    <div class="flex flex-col">
+                        <span class="text-gray-500 font-bold text-xs uppercase tracking-wide">Position Code</span>
+                        <span class="font-semibold text-gray-700 mt-0.5">${rowData['PositionCode'] || '-'}</span>
                     </div>
                 </div>
 
-                <div class="flex flex-col pt-4 border-t border-gray-100 mt-4 text-center">
+                <div class="flex flex-col pt-4 text-center px-2 sm:px-4">
                     <span class="text-gray-500 font-bold mb-2">Schedule / Frequency:</span>
                     <span class="bg-blue-50 text-blue-800 p-2 rounded-md font-bold text-xs leading-relaxed border border-blue-100">${scheduleList.length > 0 ? scheduleList.join(', ') : 'None'}</span>
                 </div>
@@ -599,7 +602,7 @@
         closeWeeklyModalBtnBottom.addEventListener('click', hideWeeklyModal);
         weeklyModal.addEventListener('click', (e) => { if (e.target === weeklyModal) hideWeeklyModal(); });
 
-        // ================= GRAPH MODAL LIST LOGIC =================
+        // ================= GRAPH MODAL LIST LOGIC (Doughnut Only) =================
         window.openGraphModalList = function(categoryName) {
             const categoryCol = graphCategorySelector.value;
             const weekId = graphWeekSelector.value;
