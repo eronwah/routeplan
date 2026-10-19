@@ -17,12 +17,11 @@
         .compact-table th, .compact-table td {
             word-wrap: break-word; 
             overflow-wrap: break-word;
-            padding: 0.35rem 0.25rem; /* Slight vertical padding for better spacing */
+            padding: 0.35rem 0.25rem; 
             font-size: 0.65rem; 
             vertical-align: middle;
         }
 
-        /* Desktop view */
         @media (min-width: 640px) {
             .compact-table {
                 table-layout: auto; 
@@ -33,17 +32,16 @@
             }
         }
         
-        /* Utility for neat images */
         .account-logo {
-            max-height: 1.25rem; /* h-5 equivalent but strict */
+            max-height: 1.25rem; 
             width: auto;
             max-width: 100%;
-            object-fit: contain; /* Prevents stretching */
+            object-fit: contain; 
             display: inline-block;
         }
         @media (min-width: 640px) {
             .account-logo {
-                max-height: 1.5rem; /* h-6 equivalent on desktop */
+                max-height: 1.5rem; 
             }
         }
     </style>
@@ -229,7 +227,7 @@
             return typeof val === 'number' && !isNaN(val);
         };
 
-        // Helper function for neat logos
+        // Helper function for neat logos (used ONLY in Lookup Route)
         const getAccountLogo = (accountName) => {
             if (!accountName || accountName === '-') return '-';
             const acc = accountName.toString().toUpperCase();
@@ -313,6 +311,7 @@
             }
             
             filteredData.forEach(row => {
+                // Here we use getAccountLogo for Lookup Table ONLY
                 const accountDisplay = getAccountLogo(row['Account'] || '-');
                 
                 resultTableBody.innerHTML += `
@@ -404,17 +403,15 @@
                 visitData[acc].total += (w1Visits + w2Visits + w3Visits + w4Visits);
             });
 
-            // FREQUENCY DATA RENDER
+            // FREQUENCY DATA RENDER (Text Only, No Logos)
             let freqHTML = '';
             let freqGrandTotal = {1:0, 2:0, 3:0, 4:0, total:0};
             Object.keys(freqData).forEach(acc => {
                 let d = freqData[acc];
                 freqGrandTotal[1] += d[1]; freqGrandTotal[2] += d[2]; freqGrandTotal[3] += d[3]; freqGrandTotal[4] += d[4]; freqGrandTotal.total += d.total;
-                
-                const accDisplay = getAccountLogo(acc);
 
                 freqHTML += `<tr class="border-b border-gray-100 hover:bg-gray-50">
-                             <td class="text-left font-semibold text-gray-700">${accDisplay}</td>
+                             <td class="text-left font-semibold text-gray-700">${acc}</td>
                              <td class="text-gray-600">${d[1] || '-'}</td>
                              <td class="text-gray-600">${d[2] || '-'}</td>
                              <td class="text-gray-600">${d[3] || '-'}</td>
@@ -428,17 +425,15 @@
                          <td>${freqGrandTotal.total}</td></tr>`;
             document.getElementById('pivot-freq-body').innerHTML = freqHTML;
 
-            // WEEKLY VISITS DATA RENDER
+            // WEEKLY VISITS DATA RENDER (Text Only, No Logos)
             let visitHTML = '';
             let visitGrandTotal = {1:0, 2:0, 3:0, 4:0, total:0};
             Object.keys(visitData).forEach(acc => {
                 let d = visitData[acc];
                 visitGrandTotal[1] += d[1]; visitGrandTotal[2] += d[2]; visitGrandTotal[3] += d[3]; visitGrandTotal[4] += d[4]; visitGrandTotal.total += d.total;
-                
-                const accDisplay = getAccountLogo(acc);
 
                 visitHTML += `<tr class="border-b border-gray-100 hover:bg-gray-50">
-                             <td class="text-left font-semibold text-gray-700">${accDisplay}</td>
+                             <td class="text-left font-semibold text-gray-700">${acc}</td>
                              <td class="text-gray-600">${d[1] || '-'}</td>
                              <td class="text-gray-600">${d[2] || '-'}</td>
                              <td class="text-gray-600">${d[3] || '-'}</td>
