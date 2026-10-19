@@ -17,7 +17,6 @@
         .compact-table { width: 100%; table-layout: fixed; }
         .auto-table { width: 100%; table-layout: auto; }
 
-        /* Pinaliit at siniksik ang padding at font-size para sa lahat ng tables */
         .compact-table th, .compact-table td,
         .auto-table th, .auto-table td {
             word-wrap: break-word; overflow-wrap: break-word;
@@ -27,9 +26,7 @@
         @media (min-width: 640px) {
             .compact-table { table-layout: auto; }
             .compact-table th, .compact-table td,
-            .auto-table th, .auto-table td { 
-                padding: 0.4rem 0.5rem; font-size: 0.75rem; /* Equivalent to text-xs */
-            }
+            .auto-table th, .auto-table td { padding: 0.4rem 0.5rem; font-size: 0.75rem; }
         }
         
         .account-logo { max-height: 1.25rem; width: auto; max-width: 100%; object-fit: contain; display: inline-block; }
@@ -181,7 +178,7 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
                 <!-- Bar Chart -->
-                <div class="border border-gray-200 rounded-xl p-4 shadow-sm relative w-full flex flex-col transition hover:shadow-md bg-white">
+                <div class="border border-gray-200 rounded-xl p-4 shadow-sm relative w-full flex flex-col bg-white transition hover:shadow-md">
                     <h3 class="text-center text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide">Daily Breakdown</h3>
                     <div class="relative flex-1 min-h-[200px] sm:min-h-[250px]"><canvas id="barChart"></canvas></div>
                     <div id="barChartAnalysis" class="mt-4 p-3 bg-blue-50 text-blue-800 text-[10px] sm:text-xs rounded-lg border border-blue-100 leading-relaxed hidden"></div>
@@ -201,18 +198,18 @@
 
     <!-- ================= CUSTOMER INFO MODAL (Lookup Tab) ================= -->
     <div id="customerModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-50 hidden flex items-center justify-center p-4 transition-opacity">
-        <div class="bg-white rounded-xl shadow-xl max-w-sm w-full p-5 sm:p-6 relative">
+        <div class="bg-white rounded-xl shadow-xl max-w-sm w-full p-4 sm:p-5 relative">
             <button id="closeModalBtn" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600 focus:outline-none">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
-            <h3 class="text-lg font-bold text-gray-800 mb-4 border-b border-gray-200 pb-2 text-center">Customer Details</h3>
+            <h3 class="text-base sm:text-lg font-bold text-gray-800 mb-3 border-b border-gray-200 pb-2 text-center">Customer Details</h3>
             
             <div id="modalContent" class="w-full">
                 <!-- Content injected via JS -->
             </div>
             
-            <div class="mt-6 text-center">
-                <button id="closeModalBtnBottom" class="bg-gray-100 text-gray-700 hover:bg-gray-200 px-4 py-2 rounded-lg text-sm font-semibold transition w-full">Close</button>
+            <div class="mt-4 text-center">
+                <button id="closeModalBtnBottom" class="bg-gray-100 text-gray-700 hover:bg-gray-200 px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition w-full">Close</button>
             </div>
         </div>
     </div>
@@ -311,6 +308,7 @@
         ];
 
         const dayNamesMap = { 'Mon': 'Monday', 'Tue': 'Tuesday', 'Wed': 'Wednesday', 'Thu': 'Thursday', 'Fri': 'Friday', 'Sat': 'Saturday', 'Sun': 'Sunday' };
+
         const chartColors = ['#2563eb', '#dc2626', '#059669', '#d97706', '#7c3aed', '#0891b2', '#db2777', '#4f46e5', '#0d9488', '#e11d48'];
 
         // TAB HIGHLIGHTING LOGIC
@@ -477,16 +475,26 @@
             });
         }
 
-        // ================= BACKGROUND SCROLL CHECK =================
+        // ================= BACKGROUND SCROLL LOCKER =================
+        const disableScroll = () => {
+            document.body.classList.add('overflow-hidden');
+            document.documentElement.classList.add('overflow-hidden');
+        };
+
+        const enableScroll = () => {
+            document.body.classList.remove('overflow-hidden');
+            document.documentElement.classList.remove('overflow-hidden');
+        };
+
         const checkBodyScroll = () => {
             if (customerModal.classList.contains('hidden') && 
                 weeklyModal.classList.contains('hidden') && 
                 graphModal.classList.contains('hidden')) {
-                document.body.classList.remove('overflow-hidden');
+                enableScroll();
             }
         };
 
-        // ================= CUSTOMER MODAL LOGIC (UPDATED ALIGNMENT) =================
+        // ================= CUSTOMER MODAL LOGIC (UPDATED ALIGNMENT & SIZING) =================
         window.openCustomerModal = function(code) {
             const rowData = globalExcelData.find(r => String(r['CustomerCode']) === String(code));
             if(!rowData) return;
@@ -496,33 +504,34 @@
                 if (isValidCell(rowData[day])) scheduleList.push(day.replace(/(\D+)(\d+)/, '$1 $2'));
             });
 
+            // Ginamit ang text-xs sm:text-sm para lumiit ang content
             modalContent.innerHTML = `
-                <div class="flex flex-col space-y-3 text-left px-2 sm:px-4 text-sm sm:text-base border-b border-gray-100 pb-4">
+                <div class="flex flex-col space-y-2 text-left px-2 sm:px-4 border-b border-gray-100 pb-3">
                     <div class="flex flex-col">
-                        <span class="text-gray-500 font-bold text-xs uppercase tracking-wide">Customer Name</span>
-                        <span class="font-semibold text-gray-800 break-words mt-0.5">${rowData['Customer Name'] || '-'}</span>
+                        <span class="text-gray-500 font-bold text-[10px] sm:text-xs uppercase tracking-wide">Customer Name</span>
+                        <span class="font-semibold text-gray-800 text-xs sm:text-sm break-words mt-0.5">${rowData['Customer Name'] || '-'}</span>
                     </div>
                     <div class="flex flex-col">
-                        <span class="text-gray-500 font-bold text-xs uppercase tracking-wide">Account</span>
-                        <span class="font-semibold text-gray-700 mt-0.5">${rowData['Account'] || '-'}</span>
+                        <span class="text-gray-500 font-bold text-[10px] sm:text-xs uppercase tracking-wide">Account</span>
+                        <span class="font-semibold text-gray-700 text-xs sm:text-sm mt-0.5">${rowData['Account'] || '-'}</span>
                     </div>
                     <div class="flex flex-col">
-                        <span class="text-gray-500 font-bold text-xs uppercase tracking-wide">Code</span>
-                        <span class="font-mono font-bold text-blue-600 mt-0.5">${rowData['CustomerCode'] || '-'}</span>
+                        <span class="text-gray-500 font-bold text-[10px] sm:text-xs uppercase tracking-wide">Code</span>
+                        <span class="font-mono font-bold text-blue-600 text-xs sm:text-sm mt-0.5">${rowData['CustomerCode'] || '-'}</span>
                     </div>
                     <div class="flex flex-col">
-                        <span class="text-gray-500 font-bold text-xs uppercase tracking-wide">Position Code</span>
-                        <span class="font-semibold text-gray-700 mt-0.5">${rowData['PositionCode'] || '-'}</span>
+                        <span class="text-gray-500 font-bold text-[10px] sm:text-xs uppercase tracking-wide">Position Code</span>
+                        <span class="font-semibold text-gray-700 text-xs sm:text-sm mt-0.5">${rowData['PositionCode'] || '-'}</span>
                     </div>
                 </div>
 
-                <div class="flex flex-col pt-4 text-center px-2 sm:px-4">
-                    <span class="text-gray-500 font-bold mb-2">Schedule / Frequency:</span>
-                    <span class="bg-blue-50 text-blue-800 p-2 rounded-md font-bold text-xs leading-relaxed border border-blue-100">${scheduleList.length > 0 ? scheduleList.join(', ') : 'None'}</span>
+                <div class="flex flex-col pt-3 text-center px-2 sm:px-4">
+                    <span class="text-gray-500 font-bold text-[10px] sm:text-xs mb-1.5">Schedule / Frequency:</span>
+                    <span class="bg-blue-50 text-blue-800 p-1.5 rounded-md font-bold text-[10px] sm:text-xs leading-relaxed border border-blue-100">${scheduleList.length > 0 ? scheduleList.join(', ') : 'None'}</span>
                 </div>
             `;
             customerModal.classList.remove('hidden');
-            document.body.classList.add('overflow-hidden');
+            disableScroll();
         };
 
         const hideModal = () => { customerModal.classList.add('hidden'); checkBodyScroll(); };
@@ -583,7 +592,7 @@
 
             weeklyModalContent.innerHTML = contentHTML;
             weeklyModal.classList.remove('hidden');
-            document.body.classList.add('overflow-hidden');
+            disableScroll();
 
             const accordions = weeklyModalContent.querySelectorAll('.weekly-accordion');
             accordions.forEach(acc => {
@@ -651,7 +660,7 @@
 
             graphModalContent.innerHTML = gridHtml;
             graphModal.classList.remove('hidden');
-            document.body.classList.add('overflow-hidden');
+            disableScroll();
         }
 
         const hideGraphModal = () => { graphModal.classList.add('hidden'); checkBodyScroll(); };
